@@ -10,7 +10,7 @@ import {
     randomId,
 } from '@mui/x-data-grid-generator';
 import { GridActionsCellItem, GridToolbarContainer } from '@mui/x-data-grid/components';
-import { GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel } from '@mui/x-data-grid/models';
+import { GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowSelectionModel } from '@mui/x-data-grid/models';
 import { Button } from '@mui/material';
 
 const initialRows: GridRowsProp = [
@@ -21,27 +21,43 @@ const initialRows: GridRowsProp = [
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
     setRowModesModel: (
-      newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
+        newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
     ) => void;
+    rowSelectionModel: GridRowSelectionModel;
 }
   
 function EditToolbar(props: EditToolbarProps) {
-    const { setRows, setRowModesModel } = props;
+    const { setRows, setRowModesModel, rowSelectionModel } = props;
 
-    const handleClick = () => {
+    const handleAddNewRowClick = () => {
         const id = randomId();
         setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
         setRowModesModel((oldModel) => ({
-        ...oldModel,
-        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+            ...oldModel,
+            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
         }));
+    };
+
+    const handleDelCheckedRowClick = () => {
+        if(rowSelectionModel.length === 0) return ;
+
+        rowSelectionModel.map(id => {
+            setRows((oldRows) => [...oldRows.filter(row => row.id !== id)]);
+            setRowModesModel((oldModel) => {
+                delete oldModel[id];
+                return {...oldModel};
+            });
+        });
     };
 
     return (
         <GridToolbarContainer>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-            Add record
-        </Button>
+            <Button color="primary" startIcon={<AddIcon />} onClick={handleAddNewRowClick}>
+                Add
+            </Button>
+            <Button color="primary" startIcon={<DeleteIcon />} onClick={handleDelCheckedRowClick}>
+                Delete
+            </Button>
         </GridToolbarContainer>
     );
 }
@@ -90,7 +106,7 @@ function Income() {
         {
             field: 'actions',
             type: 'actions',
-            headerName: 'Actions',
+            headerName: '설정',
             width: 100,
             cellClassName: 'actions',
             getActions: ({ id }) => {
@@ -172,12 +188,13 @@ function Income() {
       };
     
     const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
-    setRowModesModel(newRowModesModel);
+        setRowModesModel(newRowModesModel);
     };
 
     const [rows, setRows] = React.useState(initialRows);
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
-    
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+
     return (
         <div>
             <h1>Income</h1>
@@ -194,8 +211,6 @@ function Income() {
                     },
                 }}
                 pageSizeOptions={[50, 100, 200]}
-                checkboxSelection
-                disableRowSelectionOnClick
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={handleRowModesModelChange}
                 onRowEditStop={handleRowEditStop}
@@ -204,7 +219,13 @@ function Income() {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: { setRows, setRowModesModel },
+                    toolbar: { setRows, setRowModesModel, rowSelectionModel },
+                }}
+                checkboxSelection
+                disableRowSelectionOnClick
+                rowSelectionModel={rowSelectionModel}
+                onRowSelectionModelChange={(newRowSelectionModel) => {
+                    setRowSelectionModel(newRowSelectionModel);
                 }}
             />
         </div>
