@@ -54,61 +54,71 @@ function EditToolbar(props: EditToolbarProps) {
     );
 }
 
+export enum EGridType {
+    ONLY_READ,
+    INLINE_MODIFY,
+    TOOLBAR_MODIFY,
+    INLINE_TOOLBAR_MODIFY,
+}
+
 interface IGrid {
     initialRows: GridRowsProp;
     columns: GridColDef[];
+    gridType: EGridType;
 }
 
-function Grid({initialRows, columns}:IGrid) {
-    columns = [
-        ...columns,
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: '설정',
-            width: 100,
-            cellClassName: 'actions',
-            getActions: ({ id }) => {
-              const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-      
-              if (isInEditMode) {
-                return [
-                  <GridActionsCellItem
-                    icon={<SaveIcon />}
-                    label="Save"
-                    sx={{
-                      color: 'primary.main',
-                    }}
-                    onClick={handleSaveClick(id)}
-                  />,
-                  <GridActionsCellItem
-                    icon={<CancelIcon />}
-                    label="Cancel"
-                    className="textPrimary"
-                    onClick={handleCancelClick(id)}
-                    color="inherit"
-                  />,
-                ];
-              }
-      
-              return [
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label="Edit"
-                  className="textPrimary"
-                  onClick={handleEditClick(id)}
-                  color="inherit"
-                />,
-                <GridActionsCellItem
-                  icon={<DeleteIcon />}
-                  label="Delete"
-                  onClick={handleDeleteClick(id)}
-                  color="inherit"
-                />,
-              ];
+function Grid({initialRows, columns, gridType}:IGrid) {
+    if(gridType === EGridType.INLINE_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY){
+        columns = [
+            ...columns,
+            {
+                field: 'actions',
+                type: 'actions',
+                headerName: '설정',
+                width: 100,
+                cellClassName: 'actions',
+                getActions: ({ id }) => {
+                  const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+          
+                  if (isInEditMode) {
+                    return [
+                      <GridActionsCellItem
+                        icon={<SaveIcon />}
+                        label="Save"
+                        sx={{
+                          color: 'primary.main',
+                        }}
+                        onClick={handleSaveClick(id)}
+                      />,
+                      <GridActionsCellItem
+                        icon={<CancelIcon />}
+                        label="Cancel"
+                        className="textPrimary"
+                        onClick={handleCancelClick(id)}
+                        color="inherit"
+                      />,
+                    ];
+                  }
+          
+                  return [
+                    <GridActionsCellItem
+                      icon={<EditIcon />}
+                      label="Edit"
+                      className="textPrimary"
+                      onClick={handleEditClick(id)}
+                      color="inherit"
+                    />,
+                    <GridActionsCellItem
+                      icon={<DeleteIcon />}
+                      label="Delete"
+                      onClick={handleDeleteClick(id)}
+                      color="inherit"
+                    />,
+                  ];
+                },
             },
-        },
-    ]
+        ];
+    }
     
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -173,7 +183,7 @@ function Grid({initialRows, columns}:IGrid) {
             onRowEditStop={handleRowEditStop}
             processRowUpdate={processRowUpdate}
             slots={{
-                toolbar: EditToolbar,
+                toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
             }}
             slotProps={{
                 toolbar: { setRows, setRowModesModel, rowSelectionModel },

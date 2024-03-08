@@ -3,7 +3,7 @@ import {
     randomCreatedDate,
     randomId,
 } from '@mui/x-data-grid-generator';
-import Grid from '../components/Grid';
+import Grid, { EGridType } from '../components/Grid';
 import { GridColDef, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
 
 const initialRows: GridRowsProp = [
@@ -101,7 +101,7 @@ function Expenditure() {
         <div>
             <h1>지출</h1>
 
-            <Grid initialRows={initialRows} columns={columns} />
+            <Grid initialRows={initialRows} columns={columns} gridType={EGridType.INLINE_TOOLBAR_MODIFY} />
         </div>
     );
 }

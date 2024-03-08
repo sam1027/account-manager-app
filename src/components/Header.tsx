@@ -157,7 +157,11 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                     </ListItemButton>
                     <Collapse in={openSetting} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton 
+                                selected={pathname === "/setting/regularincome"}
+                                onClick={(event) => handleListItemClick(event, "setting/regularincome")}
+                                sx={{ pl: 4 }}
+                            >
                                 <ListItemIcon>
                                     <SentimentVerySatisfiedIcon />
                                 </ListItemIcon>
