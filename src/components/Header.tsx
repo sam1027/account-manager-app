@@ -15,10 +15,18 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import PaymentIcon from '@mui/icons-material/Payment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SettingsIcon from '@mui/icons-material/Settings';
+import MoneyOffIcon from '@mui/icons-material/MoneyOff';
 import HomeIcon from '@mui/icons-material/Home';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import CategoryIcon from '@mui/icons-material/Category';
+import { Collapse } from '@mui/material';
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
     drawerWidth: number;
@@ -61,6 +69,7 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
     const navigate = useNavigate();
     const location = useLocation();
     const { pathname } = location;
+    const [openSetting, setOpenSetting] = React.useState(true);
 
     const handleListItemClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -68,6 +77,10 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
     ) => {
         navigate(uri);
     };
+
+    const handleSettingMenuClick = () => {
+        setOpenSetting(!openSetting);
+    }
 
     return (
         <>
@@ -108,53 +121,74 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    <ListItem disablePadding>
-                        <ListItemButton
-                            selected={pathname === "/"}
-                            onClick={(event) => handleListItemClick(event, "")}
-                        >
-                            <ListItemIcon>
-                                <HomeIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'홈'} />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton
-                            selected={pathname === "/income"}
-                            onClick={(event) => handleListItemClick(event, "income")}
-                        >
-                            <ListItemIcon>
-                                <AttachMoneyIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'수입'} />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton
-                            selected={pathname === "/expenditure"}
-                            onClick={(event) => handleListItemClick(event, "expenditure")}
-                        >
-                            <ListItemIcon>
-                                <PaymentIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'지출'} />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-                <Divider />
-                <List>
-                    <ListItem disablePadding>
-                        <ListItemButton
-                            selected={pathname === "/setting"}
-                            onClick={(event) => handleListItemClick(event, "setting")}
-                        >
-                            <ListItemIcon>
-                                <SettingsIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'설정'} />
-                        </ListItemButton>
-                    </ListItem>
+                    <ListItemButton
+                        selected={pathname === "/"}
+                        onClick={(event) => handleListItemClick(event, "")}
+                    >
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'홈'} />
+                    </ListItemButton>
+                    <ListItemButton
+                        selected={pathname === "/income"}
+                        onClick={(event) => handleListItemClick(event, "income")}
+                    >
+                        <ListItemIcon>
+                            <AttachMoneyIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'수입'} />
+                    </ListItemButton>
+                    <ListItemButton
+                        selected={pathname === "/expenditure"}
+                        onClick={(event) => handleListItemClick(event, "expenditure")}
+                    >
+                        <ListItemIcon>
+                            <MoneyOffIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'지출'} />
+                    </ListItemButton>
+                    <ListItemButton onClick={handleSettingMenuClick}>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'설정'} />
+                        {openSetting ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={openSetting} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemIcon>
+                                    <SentimentVerySatisfiedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="정기 수입" />
+                            </ListItemButton>
+                            <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemIcon>
+                                    <SentimentNeutralIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="정기 지출" />
+                            </ListItemButton>
+                            <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemIcon>
+                                    <CreditCardIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="카드" />
+                            </ListItemButton>
+                            <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemIcon>
+                                    <AccountBalanceIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="금융기관" />
+                            </ListItemButton>
+                            <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemIcon>
+                                    <CategoryIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="항목 관리" />
+                            </ListItemButton>
+                        </List>
+                    </Collapse>
                 </List>
             </Drawer>
         </>

@@ -4,6 +4,7 @@ import SystemError from "./pages/errors/SystemError";
 import Expenditure from "./pages/Expenditure";
 import Income from "./pages/Income";
 import Main from "./pages/Main";
+import RegularIncome from "./pages/setting/RegularIncome";
 import Root from "./Root";
 
 const router = createBrowserRouter([
@@ -24,6 +25,11 @@ const router = createBrowserRouter([
             {
                 path: "expenditure",
                 element: <Expenditure />,
+                errorElement: <SystemError />
+            },
+            {
+                path: "setting/regularincome",
+                element: <RegularIncome />,
                 errorElement: <SystemError />
             },
         ],

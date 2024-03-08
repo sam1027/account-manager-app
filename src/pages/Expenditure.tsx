@@ -51,7 +51,7 @@ const columns: GridColDef[] = [
     // 카테고리 항목으로 관리
     { 
         field: 'finance'
-        , headerName: '금융처'
+        , headerName: '금융기관'
         , width: 150
         , editable: true
         , type: 'singleSelect'
