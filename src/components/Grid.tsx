@@ -16,18 +16,24 @@ interface EditToolbarProps {
         newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
     ) => void;
     rowSelectionModel: GridRowSelectionModel;
+    addType: EAddType;
+    handleDialogAddClick: () => void;
 }
   
 function EditToolbar(props: EditToolbarProps) {
-    const { setRows, setRowModesModel, rowSelectionModel } = props;
+    const { setRows, setRowModesModel, rowSelectionModel, addType, handleDialogAddClick } = props;
 
     const handleAddNewRowClick = () => {
-        const id = randomId();
-        setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }));
+        if(addType === EAddType.NEW_ROW){
+            const id = randomId();
+            setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+            setRowModesModel((oldModel) => ({
+                ...oldModel,
+                [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+            }));
+        }else{
+            handleDialogAddClick();
+        }
     };
 
     const handleDelCheckedRowClick = () => {
@@ -42,6 +48,10 @@ function EditToolbar(props: EditToolbarProps) {
         });
     };
 
+    const handleSaveClick = () => {
+        console.log('Save')
+    };
+
     return (
         <GridToolbarContainer>
             <Button color="primary" startIcon={<AddIcon />} onClick={handleAddNewRowClick}>
@@ -49,6 +59,9 @@ function EditToolbar(props: EditToolbarProps) {
             </Button>
             <Button color="primary" startIcon={<DeleteIcon />} onClick={handleDelCheckedRowClick}>
                 Delete
+            </Button>
+            <Button color="primary" startIcon={<SaveIcon />} onClick={handleSaveClick}>
+                Save
             </Button>
         </GridToolbarContainer>
     );
@@ -61,13 +74,20 @@ export enum EGridType {
     INLINE_TOOLBAR_MODIFY,
 }
 
+export enum EAddType {
+    NEW_ROW,
+    DIALOG,
+}
+
 interface IGrid {
     initialRows: GridRowsProp;
     columns: GridColDef[];
     gridType: EGridType;
+    addType?: EAddType;
+    handleDialogAddClick?: () => void;
 }
 
-function Grid({initialRows, columns, gridType}:IGrid) {
+function Grid({initialRows, columns, gridType, addType=EAddType.NEW_ROW, handleDialogAddClick}:IGrid) {
     if(gridType === EGridType.INLINE_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY){
         columns = [
             ...columns,
@@ -186,7 +206,7 @@ function Grid({initialRows, columns, gridType}:IGrid) {
                 toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
             }}
             slotProps={{
-                toolbar: { setRows, setRowModesModel, rowSelectionModel },
+                toolbar: { setRows, setRowModesModel, rowSelectionModel, addType, handleDialogAddClick },
             }}
             checkboxSelection
             disableRowSelectionOnClick
