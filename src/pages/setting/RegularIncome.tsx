@@ -9,6 +9,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { InputAdornment, MenuItem } from '@mui/material';
+
+interface IDialogItem {
+    cycle: number;
+    month: number;
+    date: number;
+    amount: number;
+    source: number;
+    finance: number;
+    content: string;
+}
 
 function RegularIncome() {
     const initialRows: GridRowsProp = [
@@ -16,6 +27,15 @@ function RegularIncome() {
         { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, source: '2', finance: '2', content: '기타2' },
         { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, source: '3', finance: '3', content: '기타3' },
     ];
+
+    const _cycleCode = [
+        { value: '1', label: '매년' },
+        { value: '2', label: '매달' },
+        { value: '3', label: '매일' },
+    ];
+    // const _monthCode = Array(9).fill(undefined).map(m => ({ value: m, label: m }));
+    const _monthCode = Array.from({ length: 12 }, (_, i) => ({ value: `${i+1}`, label: `${i+1}` }));
+    const _dateCode = Array.from({ length: 31 }, (_, i) => ({ value: `${i+1}`, label: `${i+1}` }));
     
     const columns: GridColDef[] = [
         { 
@@ -24,11 +44,7 @@ function RegularIncome() {
             , width: 150
             , editable: false
             , type: 'singleSelect'
-            , valueOptions: [
-                { value: '1', label: '매년' },
-                { value: '2', label: '매달' },
-                { value: '3', label: '매일' },
-            ]
+            , valueOptions: _cycleCode
         },
         { 
             field: 'month'
@@ -121,6 +137,7 @@ function RegularIncome() {
         handleDialogOpen();
     }
 
+
     return (
         <div>
             <h1>RegularIncome</h1>
@@ -143,9 +160,9 @@ function RegularIncome() {
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
-                        const formJson = Object.fromEntries((formData as any).entries());
-                        const email = formJson.email;
-                        console.log(email);
+                        const formJson = Object.fromEntries((formData as any).entries()) as IDialogItem;
+                        const amount = formJson.amount;
+                        console.log(amount);
                         handleDialogClose();
                     },
                 }}
@@ -156,16 +173,62 @@ function RegularIncome() {
                         To subscribe to this website, please enter your email address here. We
                         will send updates occasionally.
                     </DialogContentText> */}
+
                     <TextField
+                        id="outlined-select-currency"
+                        select
+                        label="실행 주기"
+                        defaultValue="1"
+                        margin="dense"
+                        helperText="Please select your currency"
+                    >
+                        {_cycleCode.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        select
+                        label="월"
+                        defaultValue="1"
+                        margin="dense"
+                        helperText="Please select your currency"
+                    >
+                        {_monthCode.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        select
+                        label="일"
+                        defaultValue="1"
+                        margin="dense"
+                        helperText="Please select your currency"
+                    >
+                        {_dateCode.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        error={false}
                         autoFocus
                         required
                         margin="dense"
-                        id="name"
-                        name="email"
-                        label="Email Address"
-                        type="email"
+                        id="amount"
+                        name="amount"
+                        label="금액"
                         fullWidth
                         variant="standard"
+                        InputProps={{
+                            startAdornment: <InputAdornment position="end">$</InputAdornment>
+                        }}
                     />
                 </DialogContent>
                 <DialogActions>
