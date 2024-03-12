@@ -9,6 +9,8 @@ import { randomId } from '@mui/x-data-grid-generator';
 import { GridActionsCellItem, GridToolbarContainer } from '@mui/x-data-grid/components';
 import { GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowSelectionModel } from '@mui/x-data-grid/models';
 import { Button } from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -18,10 +20,17 @@ interface EditToolbarProps {
     rowSelectionModel: GridRowSelectionModel;
     addType: EAddType;
     handleDialogAddClick: () => void;
+    handleSaveSnbOpen: () => void;
 }
   
 function EditToolbar(props: EditToolbarProps) {
-    const { setRows, setRowModesModel, rowSelectionModel, addType, handleDialogAddClick } = props;
+    const { setRows, 
+        setRowModesModel, 
+        rowSelectionModel, 
+        addType, 
+        handleDialogAddClick,
+        handleSaveSnbOpen 
+    } = props;
 
     const handleAddNewRowClick = () => {
         if(addType === EAddType.NEW_ROW){
@@ -49,7 +58,7 @@ function EditToolbar(props: EditToolbarProps) {
     };
 
     const handleSaveClick = () => {
-        console.log('Save')
+        handleSaveSnbOpen();
     };
 
     return (
@@ -183,38 +192,68 @@ function Grid({initialRows, columns, gridType, addType=EAddType.NEW_ROW, handleD
     const [rows, setRows] = React.useState(initialRows);
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+    const [openSaveSnb, setOpenSaveSnb] = React.useState(false);
+
+    const handleSaveSnbOpen = () => {
+        setOpenSaveSnb(true);
+    };
+
+    const handleSaveSnbClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSaveSnb(false);
+    };
 
     return (
-        <DataGrid 
-            autoHeight 
-            rows={rows} 
-            columns={columns} 
-            editMode="row"
-            initialState={{
-                pagination: {
-                    paginationModel: {
-                        pageSize: 50,
+        <>
+            <DataGrid 
+                autoHeight 
+                rows={rows} 
+                columns={columns} 
+                editMode="row"
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: 50,
+                        },
                     },
-                },
-            }}
-            pageSizeOptions={[50, 100, 200]}
-            rowModesModel={rowModesModel}
-            onRowModesModelChange={handleRowModesModelChange}
-            onRowEditStop={handleRowEditStop}
-            processRowUpdate={processRowUpdate}
-            slots={{
-                toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
-            }}
-            slotProps={{
-                toolbar: { setRows, setRowModesModel, rowSelectionModel, addType, handleDialogAddClick },
-            }}
-            checkboxSelection
-            disableRowSelectionOnClick
-            rowSelectionModel={rowSelectionModel}
-            onRowSelectionModelChange={(newRowSelectionModel) => {
-                setRowSelectionModel(newRowSelectionModel);
-            }}
-        />
+                }}
+                pageSizeOptions={[50, 100, 200]}
+                rowModesModel={rowModesModel}
+                onRowModesModelChange={handleRowModesModelChange}
+                onRowEditStop={handleRowEditStop}
+                processRowUpdate={processRowUpdate}
+                slots={{
+                    toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
+                }}
+                slotProps={{
+                    toolbar: { setRows, 
+                        setRowModesModel, 
+                        rowSelectionModel, 
+                        addType, 
+                        handleDialogAddClick,
+                        handleSaveSnbOpen
+                    },
+                }}
+                checkboxSelection
+                disableRowSelectionOnClick
+                rowSelectionModel={rowSelectionModel}
+                onRowSelectionModelChange={(newRowSelectionModel) => {
+                    setRowSelectionModel(newRowSelectionModel);
+                }}
+            />
+            <Snackbar open={openSaveSnb} autoHideDuration={3000} onClose={handleSaveSnbClose}>
+                <Alert
+                    onClose={handleSaveSnbClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Save Success!
+                </Alert>
+            </Snackbar>
+        </>
     );
 }
 
