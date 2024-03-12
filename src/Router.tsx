@@ -4,6 +4,9 @@ import SystemError from "./pages/errors/SystemError";
 import Expenditure from "./pages/Expenditure";
 import Income from "./pages/Income";
 import Main from "./pages/Main";
+import Account from "./pages/setting/Account";
+import Bank from "./pages/setting/Account";
+import RegularExpenditure from "./pages/setting/RegularExpenditure";
 import RegularIncome from "./pages/setting/RegularIncome";
 import Root from "./Root";
 
@@ -30,6 +33,16 @@ const router = createBrowserRouter([
             {
                 path: "setting/regularincome",
                 element: <RegularIncome />,
+                errorElement: <SystemError />
+            },
+            {
+                path: "setting/regularexpenditure",
+                element: <RegularExpenditure />,
+                errorElement: <SystemError />
+            },
+            {
+                path: "setting/account",
+                element: <Account />,
                 errorElement: <SystemError />
             },
         ],

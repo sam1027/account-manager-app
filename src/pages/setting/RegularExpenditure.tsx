@@ -5,7 +5,7 @@ import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode } from '../../utils/cmnCode';
 import RegularIncomeForm from './RegularIncomeForm';
 
-function RegularIncome() {
+function RegularExpenditure() {
     const initialRows: GridRowsProp = [
         { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', finance: '1', content: '기타1' },
         { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', finance: '2', content: '기타2' },
@@ -104,6 +104,8 @@ function RegularIncome() {
 
     return (
         <div>
+            <h1>정기 지출</h1>
+
             <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
@@ -117,4 +119,4 @@ function RegularIncome() {
     );
 }
 
-export default RegularIncome;
+export default RegularExpenditure;

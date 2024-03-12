@@ -167,7 +167,11 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                                 </ListItemIcon>
                                 <ListItemText primary="정기 수입" />
                             </ListItemButton>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton 
+                                selected={pathname === "/setting/regularexpenditure"}
+                                onClick={(event) => handleListItemClick(event, "setting/regularexpenditure")}
+                                sx={{ pl: 4 }}
+                            >
                                 <ListItemIcon>
                                     <SentimentNeutralIcon />
                                 </ListItemIcon>
@@ -179,11 +183,15 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                                 </ListItemIcon>
                                 <ListItemText primary="카드" />
                             </ListItemButton>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton 
+                                selected={pathname === "/setting/account"}
+                                onClick={(event) => handleListItemClick(event, "setting/account")}
+                                sx={{ pl: 4 }}
+                            >
                                 <ListItemIcon>
                                     <AccountBalanceIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="금융기관" />
+                                <ListItemText primary="계좌 관리" />
                             </ListItemButton>
                             <ListItemButton sx={{ pl: 4 }}>
                                 <ListItemIcon>

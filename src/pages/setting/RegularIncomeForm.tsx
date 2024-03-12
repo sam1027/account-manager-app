@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { MenuItem } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
-import { _cycleCode, _dateCode, _financeCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
+import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
 
 interface IDialogItem {
     cycle: number;
@@ -139,7 +139,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     margin="normal"
                     style = {{width: 200, marginLeft: 10}}
                 >
-                    {_financeCode.map((option) => (
+                    {_accountCode.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                             {option.label}
                         </MenuItem>
