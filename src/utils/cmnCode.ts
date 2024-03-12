@@ -16,6 +16,7 @@ export const _monthCode = Array.from({ length: 12 }, (_, i) => ({ value: `${i+1}
 
 // 일(Date)
 export const _dateCode = Array.from({ length: 31 }, (_, i) => ({ value: `${i+1}`, label: `${i+1}` }));
+export const _dateCodeCheckCardVersion = [{ value: '0', label: '즉시' }, ..._dateCode];
 
 // 소득원
 export const _incomeSourceCode = [
@@ -39,6 +40,19 @@ export const _bank = [
     { value: '2', label: '우리은행' },
     { value: '3', label: '농협' },
     { value: '4', label: '쌈짓돈' },
+];
+
+// 카드 구분
+export const _cardType = [
+    { value: '1', label: '신용카드' },
+    { value: '2', label: '체크카드' },
+];
+
+// 카드사
+export const _cardCorp = [
+    { value: '1', label: '롯데카드' },
+    { value: '2', label: '삼성카드' },
+    { value: '3', label: '현대카드' },
 ];
 
 // 카드 - 추후 카드관리에서 데이터 Get!

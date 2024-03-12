@@ -177,11 +177,15 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                                 </ListItemIcon>
                                 <ListItemText primary="정기 지출" />
                             </ListItemButton>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton 
+                                selected={pathname === "/setting/card"}
+                                onClick={(event) => handleListItemClick(event, "setting/card")}
+                                sx={{ pl: 4 }}
+                            >
                                 <ListItemIcon>
                                     <CreditCardIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="카드" />
+                                <ListItemText primary="카드 관리" />
                             </ListItemButton>
                             <ListItemButton 
                                 selected={pathname === "/setting/account"}
