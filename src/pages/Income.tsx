@@ -5,11 +5,12 @@ import {
 } from '@mui/x-data-grid-generator';
 import Grid, { EGridType } from '../components/Grid';
 import { GridColDef, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
+import { _accountCode, _incomeSourceCode } from '../utils/cmnCode';
 
 const initialRows: GridRowsProp = [
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 20000, source: '1', finance: '1', content: '기타1' },
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 1000, source: '2', finance: '2', content: '기타2' },
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 50000, source: '3', finance: '3', content: '기타3' },
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 20000, source: '1', account: '1', content: '기타1' },
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 1000, source: '2', account: '2', content: '기타2' },
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 50000, source: '3', account: '3', content: '기타3' },
 ];
 
 const columns: GridColDef[] = [
@@ -41,27 +42,17 @@ const columns: GridColDef[] = [
         , width: 150
         , editable: true
         , type: 'singleSelect'
-        , valueOptions: [
-            { value: '1', label: '월급' },
-            { value: '2', label: '불로소득' },
-            { value: '3', label: '부업' },
-            { value: '4', label: '알바비' },
-        ]
+        , valueOptions: _incomeSourceCode
         , align: 'left'
     },
     // 카테고리 항목으로 관리
     { 
-        field: 'finance'
-        , headerName: '금융기관'
+        field: 'account'
+        , headerName: '입금계좌'
         , width: 150
         , editable: true
         , type: 'singleSelect'
-        , valueOptions: [
-            { value: '1', label: '국민은행' },
-            { value: '2', label: '우리은행' },
-            { value: '3', label: '현금' },
-            { value: '4', label: '알바비' },
-        ]
+        , valueOptions: _accountCode
         , align: 'left'
     },
     { 

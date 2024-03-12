@@ -1,3 +1,9 @@
+// 결재 수단
+export const _expdWayCode = [
+    { value: '1', label: '카드' },
+    { value: '2', label: '현금' },
+];
+
 // 정기 수입/지출 주기
 export const _cycleCode = [
     { value: '1', label: '매년' },
@@ -32,5 +38,21 @@ export const _bank = [
     { value: '1', label: '국민은행' },
     { value: '2', label: '우리은행' },
     { value: '3', label: '농협' },
-    { value: '4', label: '현금' },
+    { value: '4', label: '쌈짓돈' },
+];
+
+// 카드 - 추후 카드관리에서 데이터 Get!
+export const _cardCode = [
+    { value: '1', label: '생활비 카드' },
+    { value: '2', label: '성은 현대 카드' },
+    { value: '3', label: '종원 삼성 카드' },
+];
+
+// 지출 항목 
+export const _expdItemCode = [
+    { value: '1', label: '식비' },
+    { value: '2', label: '관리비' },
+    { value: '3', label: '경조사' },
+    { value: '4', label: '문화생활' },
+    { value: '5', label: '생필품' },
 ];
