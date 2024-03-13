@@ -7,9 +7,9 @@ import CardForm from './CardForm';
 
 function Card() {
     const initialRows: GridRowsProp = [
-        { id: randomId(), cardType: '1', cardCorp: '1', cardName: "성은 롯데 카드", paymentDate: "25", account: "생활비 계좌" },
-        { id: randomId(), cardType: '1', cardCorp: '2', cardName: "성은 삼성 카드", paymentDate: "25", account: "생활비 계좌" },
-        { id: randomId(), cardType: '1', cardCorp: '3', cardName: "성은 현대 카드", paymentDate: "25", account: "생활비 계좌" },
+        { id: randomId(), cardType: 'credit', cardCorp: '1', cardName: "성은 롯데 카드", paymentDate: "25", account: "생활비 계좌" },
+        { id: randomId(), cardType: 'check', cardCorp: '2', cardName: "성은 삼성 카드", paymentDate: "25", account: "생활비 계좌" },
+        { id: randomId(), cardType: 'credit', cardCorp: '3', cardName: "성은 현대 카드", paymentDate: "25", account: "생활비 계좌" },
     ];
 
     const columns: GridColDef[] = [

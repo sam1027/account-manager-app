@@ -16,7 +16,6 @@ export const _monthCode = Array.from({ length: 12 }, (_, i) => ({ value: `${i+1}
 
 // 일(Date)
 export const _dateCode = Array.from({ length: 31 }, (_, i) => ({ value: `${i+1}`, label: `${i+1}` }));
-export const _dateCodeCheckCardVersion = [{ value: '0', label: '즉시' }, ..._dateCode];
 
 // 소득원
 export const _incomeSourceCode = [
@@ -44,8 +43,8 @@ export const _bank = [
 
 // 카드 구분
 export const _cardType = [
-    { value: '1', label: '신용카드' },
-    { value: '2', label: '체크카드' },
+    { value: 'credit', label: '신용카드' },
+    { value: 'check', label: '체크카드' },
 ];
 
 // 카드사

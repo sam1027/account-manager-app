@@ -132,9 +132,9 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     ))}
                 </TextField>
                 <TextField
-                    id="finance"
+                    id="account"
                     select
-                    label="금융기관"
+                    label="입금계좌"
                     defaultValue={"1"}
                     margin="normal"
                     style = {{width: 200, marginLeft: 10}}

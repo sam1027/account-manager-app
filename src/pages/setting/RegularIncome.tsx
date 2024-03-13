@@ -7,9 +7,9 @@ import RegularIncomeForm from './RegularIncomeForm';
 
 function RegularIncome() {
     const initialRows: GridRowsProp = [
-        { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', finance: '1', content: '기타1' },
-        { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', finance: '2', content: '기타2' },
-        { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, incomeSource: '3', finance: '3', content: '기타3' },
+        { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', account: '1', content: '기타1' },
+        { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', account: '2', content: '기타2' },
+        { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, incomeSource: '3', account: '3', content: '기타3' },
     ];
 
     const columns: GridColDef[] = [
@@ -71,8 +71,8 @@ function RegularIncome() {
         },
         // 카테고리 항목으로 관리
         { 
-            field: 'finance'
-            , headerName: '금융기관'
+            field: 'account'
+            , headerName: '입금계좌'
             , width: 150
             , editable: false
             , type: 'singleSelect'

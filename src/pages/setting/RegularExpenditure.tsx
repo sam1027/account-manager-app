@@ -106,7 +106,7 @@ function RegularExpenditure() {
         <div>
             <h1>정기 지출</h1>
 
-            <Grid 
+            {/* <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
                 gridType={EGridType.TOOLBAR_MODIFY} 
@@ -114,7 +114,7 @@ function RegularExpenditure() {
                 handleDialogAddClick={handleDialogAddClick} 
             />
 
-            <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
+            <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} /> */}
         </div>
     );
 }
