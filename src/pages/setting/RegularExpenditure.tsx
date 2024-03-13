@@ -2,21 +2,44 @@ import React from 'react';
 import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
-import { _cycleCode, _accountCode, _incomeSourceCode } from '../../utils/cmnCode';
+import { _cycleCode, _accountCode, _incomeSourceCode, _expdItemCode, _cardCode, _expdWayCode } from '../../utils/cmnCode';
 import RegularIncomeForm from './RegularIncomeForm';
 
 function RegularExpenditure() {
     const initialRows: GridRowsProp = [
-        { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', finance: '1', content: '기타1' },
-        { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', finance: '2', content: '기타2' },
-        { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, incomeSource: '3', finance: '3', content: '기타3' },
+        { 
+            id: randomId(), 
+            cycle: '1', 
+            month: 12, 
+            date: 23, 
+            amount: 20000, 
+            expdWay: '1', 
+            expdMethod: '1', 
+            account: '1',
+            expdItem: '1',
+            content: '기타1', 
+            isUse: true 
+        },
+        { 
+            id: randomId(), 
+            cycle: '2', 
+            month: null, 
+            date: 23, 
+            amount: 20000, 
+            expdWay: '1', 
+            expdMethod: '1', 
+            account: '1',
+            expdItem: '1',
+            content: '기타1', 
+            isUse: false 
+        },
     ];
 
     const columns: GridColDef[] = [
         { 
             field: 'cycle'
             , headerName: '실행 주기'
-            , width: 150
+            , width: 100
             , editable: false
             , type: 'singleSelect'
             , valueOptions: _cycleCode
@@ -24,7 +47,7 @@ function RegularExpenditure() {
         { 
             field: 'month'
             , headerName: '월(Month)'
-            , width: 150
+            , width: 100
             , editable: false
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
                 if (params.value == null) {
@@ -36,7 +59,7 @@ function RegularExpenditure() {
         { 
             field: 'date'
             , headerName: '일(Date)'
-            , width: 150
+            , width: 100
             , editable: false
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
                 if (params.value == null) {
@@ -49,7 +72,7 @@ function RegularExpenditure() {
             field: 'amount'
             , headerName: '금액'
             , type: 'number'
-            , width: 150
+            , width: 100
             , editable: false
             , align: 'right'
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
@@ -59,24 +82,45 @@ function RegularExpenditure() {
                 return `${params.value.toLocaleString()}`;
             },
         },
-        // 카테고리 항목으로 관리
+        // 공통코드
         { 
-            field: 'incomeSource'
-            , headerName: '소득원'
+            field: 'expdWay'
+            , headerName: '결제 수단'
             , width: 150
-            , editable: false
+            , editable: true
             , type: 'singleSelect'
-            , valueOptions: _incomeSourceCode
+            , valueOptions: _expdWayCode
+            , align: 'left'
+        },
+        // 결재수단 '카드'인 경우만 활성화
+        { 
+            field: 'expdMethod'
+            , headerName: '결제 카드'
+            , width: 150
+            , editable: true
+            , type: 'singleSelect'
+            , valueOptions: _cardCode
+            , align: 'left'
+        },
+        // 결재수단 '현금'인 경우만 활성화
+        // 결재 카드 선택하면 자동으로 연동됨
+        { 
+            field: 'account'
+            , headerName: '결제 계좌'
+            , width: 150
+            , editable: true
+            , type: 'singleSelect'
+            , valueOptions: _accountCode
             , align: 'left'
         },
         // 카테고리 항목으로 관리
         { 
-            field: 'finance'
-            , headerName: '금융기관'
+            field: 'expdItem'
+            , headerName: '지출 항목'
             , width: 150
-            , editable: false
+            , editable: true
             , type: 'singleSelect'
-            , valueOptions: _accountCode
+            , valueOptions: _expdItemCode
             , align: 'left'
         },
         { 
@@ -85,6 +129,13 @@ function RegularExpenditure() {
             , width: 300
             , editable: false
             , align: 'left'
+        },
+        { 
+            field: 'isUse'
+            , headerName: '자동 반영'
+            , type: 'boolean'
+            , width: 100
+            , editable: false
         },
     ];
 
@@ -104,9 +155,7 @@ function RegularExpenditure() {
 
     return (
         <div>
-            <h1>정기 지출</h1>
-
-            {/* <Grid 
+            <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
                 gridType={EGridType.TOOLBAR_MODIFY} 
@@ -114,7 +163,7 @@ function RegularExpenditure() {
                 handleDialogAddClick={handleDialogAddClick} 
             />
 
-            <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} /> */}
+            <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
         </div>
     );
 }

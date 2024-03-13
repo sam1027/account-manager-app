@@ -1,7 +1,8 @@
 // 결재 수단
 export const _expdWayCode = [
     { value: '1', label: '카드' },
-    { value: '2', label: '현금' },
+    { value: '2', label: '계좌이체' },
+    { value: '3', label: '현금' },
 ];
 
 // 정기 수입/지출 주기
@@ -27,18 +28,18 @@ export const _incomeSourceCode = [
 
 // 계좌 - 추후 계좌관리에서 데이터 Get!
 export const _accountCode = [
+    { value: '0', label: '현금' },
     { value: '1', label: '성은 용돈 계좌' },
     { value: '2', label: '생활비 계좌' },
     { value: '3', label: '외식비 계좌' },
-    { value: '4', label: '성은 비상금(현금)' },
 ];
 
 // 금융기관
 export const _bank = [
+    { value: '0', label: '현금' },
     { value: '1', label: '국민은행' },
     { value: '2', label: '우리은행' },
     { value: '3', label: '농협' },
-    { value: '4', label: '쌈짓돈' },
 ];
 
 // 카드 구분

@@ -7,16 +7,16 @@ import RegularIncomeForm from './RegularIncomeForm';
 
 function RegularIncome() {
     const initialRows: GridRowsProp = [
-        { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', account: '1', content: '기타1' },
-        { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', account: '2', content: '기타2' },
-        { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, incomeSource: '3', account: '3', content: '기타3' },
+        { id: randomId(), cycle: '1', month: 12, date: 23, amount: 20000, incomeSource: '1', account: '1', content: '기타1', isUse: true },
+        { id: randomId(), cycle: '2', month: null, date: 23, amount: 1000, incomeSource: '2', account: '2', content: '기타2', isUse: true },
+        { id: randomId(), cycle: '3', month: null, date: null, amount: 50000, incomeSource: '3', account: '3', content: '기타3', isUse: false },
     ];
 
     const columns: GridColDef[] = [
         { 
             field: 'cycle'
             , headerName: '실행 주기'
-            , width: 150
+            , width: 100
             , editable: false
             , type: 'singleSelect'
             , valueOptions: _cycleCode
@@ -24,7 +24,7 @@ function RegularIncome() {
         { 
             field: 'month'
             , headerName: '월(Month)'
-            , width: 150
+            , width: 100
             , editable: false
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
                 if (params.value == null) {
@@ -36,7 +36,7 @@ function RegularIncome() {
         { 
             field: 'date'
             , headerName: '일(Date)'
-            , width: 150
+            , width: 100
             , editable: false
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
                 if (params.value == null) {
@@ -49,7 +49,7 @@ function RegularIncome() {
             field: 'amount'
             , headerName: '금액'
             , type: 'number'
-            , width: 150
+            , width: 100
             , editable: false
             , align: 'right'
             , valueFormatter: (params: GridValueFormatterParams<number>) => {
@@ -85,6 +85,13 @@ function RegularIncome() {
             , width: 300
             , editable: false
             , align: 'left'
+        },
+        { 
+            field: 'isUse'
+            , headerName: '자동 반영'
+            , type: 'boolean'
+            , width: 100
+            , editable: false
         },
     ];
 
