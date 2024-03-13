@@ -5,8 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Alert, AlertTitle, Link, MenuItem } from '@mui/material';
-import { MoneyFormatCustom } from '../../utils/Mui';
+import { Alert, Link, MenuItem } from '@mui/material';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode, _bank, _cardCorp, _cardType } from '../../utils/cmnCode';
 
 interface IDialogItem {

@@ -24,7 +24,7 @@ export const MoneyFormatCustom = React.forwardRef<NumericFormatProps, CustomProp
           }}
           thousandSeparator
           valueIsNumericString
-          prefix="₩"
+          // prefix="₩"
         />
       );
     },

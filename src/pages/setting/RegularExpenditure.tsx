@@ -4,6 +4,7 @@ import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode, _expdItemCode, _cardCode, _expdWayCode } from '../../utils/cmnCode';
 import RegularIncomeForm from './RegularIncomeForm';
+import { Box } from '@mui/material';
 
 function RegularExpenditure() {
     const initialRows: GridRowsProp = [
@@ -154,7 +155,7 @@ function RegularExpenditure() {
     }
 
     return (
-        <div>
+        <Box>
             <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
@@ -164,7 +165,7 @@ function RegularExpenditure() {
             />
 
             <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
-        </div>
+        </Box>
     );
 }
 

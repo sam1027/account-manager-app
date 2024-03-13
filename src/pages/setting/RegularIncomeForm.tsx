@@ -5,18 +5,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { MenuItem } from '@mui/material';
+import { FormControl, FormControlLabel, InputAdornment, MenuItem, Switch } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
 
 interface IDialogItem {
-    cycle: number;
-    month: number;
-    date: number;
-    amount: number;
-    source: number;
-    finance: number;
+    cycle: string;
+    month: string;
+    date: string;
+    amount: string;
+    incomeSource: string;
+    account: string;
     content: string;
+    isUse: boolean;
 }
 
 interface IRegularIncomeForm{
@@ -44,7 +45,6 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     const formData = new FormData(event.currentTarget);
                     const formJson = Object.fromEntries((formData as any).entries()) as IDialogItem;
                     console.log(formJson);
-                    const amount = formJson.amount;
                     handleDialogClose();
                 },
             }}
@@ -55,9 +55,9 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     To subscribe to this website, please enter your email address here. We
                     will send updates occasionally.
                 </DialogContentText> */}
-
                 <TextField
                     id="cycle"
+                    name="cycle"
                     select
                     label="실행 주기"
                     defaultValue={selectedCycle}
@@ -74,6 +74,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </TextField>
                 <TextField
                     id="month"
+                    name="month"
                     disabled={selectedCycle !== '1'}
                     select
                     label="월(Month)"
@@ -89,6 +90,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </TextField>
                 <TextField
                     id="date"
+                    name="date"
                     disabled={selectedCycle === '3'}
                     select
                     label="일(Date)"
@@ -114,11 +116,13 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     variant="standard"
                     InputProps={{
                         inputComponent: MoneyFormatCustom as any,
+                        startAdornment: <InputAdornment position="start">₩</InputAdornment>
                     }}
                     helperText="숫자를 입력해주세요."
                 />
                 <TextField
                     id="incomeSource"
+                    name="incomeSource"
                     select
                     label="소득원"
                     defaultValue={"1"}
@@ -133,6 +137,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </TextField>
                 <TextField
                     id="account"
+                    name="account"
                     select
                     label="입금계좌"
                     defaultValue={"1"}
@@ -147,12 +152,24 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </TextField>
                 <TextField
                     id="content"
+                    name="content"
                     label="내용"
                     multiline
                     maxRows={4}
                     fullWidth
                     margin="normal"
                     inputProps={{ maxLength: 300}}
+                />
+                <FormControlLabel 
+                    control={
+                        <Switch 
+                            defaultChecked 
+                        />
+                    } 
+                    name="isUse"
+                    value={true}
+                    label="자동반영" 
+                    labelPlacement="start"
                 />
             </DialogContent>
             <DialogActions>

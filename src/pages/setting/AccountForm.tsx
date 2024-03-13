@@ -5,7 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { MenuItem } from '@mui/material';
+import { InputAdornment, MenuItem } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode, _bank } from '../../utils/cmnCode';
 
@@ -98,6 +98,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     variant="standard"
                     InputProps={{
                         inputComponent: MoneyFormatCustom as any,
+                        startAdornment: <InputAdornment position="start">₩</InputAdornment>
                     }}
                     helperText="숫자를 입력해주세요."
                 />
