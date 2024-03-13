@@ -8,10 +8,10 @@ import { GridColDef, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-
 import { _accountCode, _cardCode, _expdItemCode, _expdWayCode } from '../utils/cmnCode';
 
 const initialRows: GridRowsProp = [
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 20000, expdWay: '1', expdMethod: '1', account: '1', expdExpectDay: randomCreatedDate(), expdItem: '1', content: '지출1'},
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 8000, expdWay: '2', expdMethod: '', account: '2', expdExpectDay: randomCreatedDate(), expdItem: '2', content: '지출2'},
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 97000, expdWay: '1', expdMethod: '1', account: '3', expdExpectDay: randomCreatedDate(), expdItem: '3', content: '지출3'},
-    { id: randomId(), ocrDate: randomCreatedDate(), amount: 6700, expdWay: '2', expdMethod: '', account: '2', expdExpectDay: randomCreatedDate(), expdItem: '4', content: '지출4'},
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 20000, expdWay: 'card', expdMethod: '1', account: '1', expdExpectDay: randomCreatedDate(), expdItem: '1', content: '지출1'},
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 8000, expdWay: 'account', expdMethod: '', account: '2', expdExpectDay: randomCreatedDate(), expdItem: '2', content: '지출2'},
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 97000, expdWay: 'card', expdMethod: '1', account: '3', expdExpectDay: randomCreatedDate(), expdItem: '3', content: '지출3'},
+    { id: randomId(), ocrDate: randomCreatedDate(), amount: 6700, expdWay: 'account', expdMethod: '', account: '2', expdExpectDay: randomCreatedDate(), expdItem: '4', content: '지출4'},
 ];
 
 const columns: GridColDef[] = [

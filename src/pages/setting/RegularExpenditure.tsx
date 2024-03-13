@@ -3,8 +3,8 @@ import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-
 import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode, _expdItemCode, _cardCode, _expdWayCode } from '../../utils/cmnCode';
-import RegularIncomeForm from './RegularIncomeForm';
 import { Box } from '@mui/material';
+import RegularExpenditureForm from './RegularExpenditureForm';
 
 function RegularExpenditure() {
     const initialRows: GridRowsProp = [
@@ -14,7 +14,7 @@ function RegularExpenditure() {
             month: 12, 
             date: 23, 
             amount: 20000, 
-            expdWay: '1', 
+            expdWay: 'card', 
             expdMethod: '1', 
             account: '1',
             expdItem: '1',
@@ -27,7 +27,7 @@ function RegularExpenditure() {
             month: null, 
             date: 23, 
             amount: 20000, 
-            expdWay: '1', 
+            expdWay: 'card', 
             expdMethod: '1', 
             account: '1',
             expdItem: '1',
@@ -164,7 +164,7 @@ function RegularExpenditure() {
                 handleDialogAddClick={handleDialogAddClick} 
             />
 
-            <RegularIncomeForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
+            <RegularExpenditureForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
         </Box>
     );
 }

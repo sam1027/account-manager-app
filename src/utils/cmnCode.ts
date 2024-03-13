@@ -1,8 +1,8 @@
 // 결재 수단
 export const _expdWayCode = [
-    { value: '1', label: '카드' },
-    { value: '2', label: '계좌이체' },
-    { value: '3', label: '현금' },
+    { value: 'card', label: '카드' },
+    { value: 'account', label: '계좌이체' },
+    { value: 'cash', label: '현금' },
 ];
 
 // 정기 수입/지출 주기
