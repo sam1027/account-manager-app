@@ -7,17 +7,131 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/Inbox';
 import ListSubheader from '@mui/material/ListSubheader';
-import { _categoryCode } from '../../utils/cmnCode';
+import { _bank, _cardCorp, _categoryCode, _expdItemCode, _incomeSourceCode } from '../../utils/cmnCode';
 import { Button, Divider, IconButton, Switch } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
+import {useImmer} from 'use-immer';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { randomId } from '@mui/x-data-grid-generator';
+
+interface ISubCategory{
+    id:string;
+    label:string;
+    isUse:boolean;
+}
 
 function Category() {
-    const [selectedCategory, setSelectedCategory] = React.useState("bank");
+    const [category, setCategory] = React.useState("bank");
+    const [subCategory, updateSubCategory] = useImmer<ISubCategory[]>([]);
+    const [addFormOpen, setAddFormOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        findSubCatList();
+    }, [category]);
+
+    React.useEffect(() => {
+        console.log('subCategory => ');
+        console.log(subCategory);
+    }, [subCategory]);
     
-    function handleCategoryClick(id:string){
-        setSelectedCategory(id);
+    // 카테고리 클릭 이벤트
+    const handleCategoryClick = (id:string) => {
+        setCategory(() => id);
     }
+
+    // 하위 카테고리 - 목록 조회 함수
+    const findSubCatList = () => {
+        updateSubCategory((subCategory) => {
+            subCategory.splice(0);
+        });
+
+        if(category === 'bank'){
+            _bank.map((item, idx)=> {
+                updateSubCategory((subCategory) => {
+                    subCategory.push({
+                        id: item.value,
+                        label: item.label,
+                        isUse: idx % 2 === 1
+                    });
+                });
+            });
+        }
+        else if(category === 'cardCorp'){
+            _cardCorp.map((item, idx)=> {
+                updateSubCategory((subCategory) => {
+                    subCategory.push({
+                        id: item.value,
+                        label: item.label,
+                        isUse: idx % 2 === 1
+                    });
+                });
+            });
+        }
+        else if(category === 'incomeSource'){
+            _incomeSourceCode.map((item, idx)=> {
+                updateSubCategory((subCategory) => {
+                    subCategory.push({
+                        id: item.value,
+                        label: item.label,
+                        isUse: idx % 2 === 1
+                    });
+                });
+            });
+        }
+        else if(category === 'expdItem'){
+            _expdItemCode.map((item, idx)=> {
+                updateSubCategory((subCategory) => {
+                    subCategory.push({
+                        id: item.value,
+                        label: item.label,
+                        isUse: idx % 2 === 1
+                    });
+                });
+            });
+        }
+    }
+
+    // 하위 카테고리 - 사용유무 변경 이벤트
+    const handleIsUseChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        updateSubCategory((subCategory) => {
+            subCategory.map(item => {
+                if(item.id === event.target.id) item.isUse = checked;
+            })
+        });
+    }
+
+    // 하위 카테고리 - 삭제 이벤트
+    const handleDeleteClick = (event:React.MouseEvent<HTMLButtonElement>) => {
+        updateSubCategory((subCategory) => {
+            const targetIdx = subCategory.findIndex(item => item.id === event.currentTarget.id);
+            subCategory.splice(targetIdx, 1);
+        });
+    }
+
+    // 하위 카테고리 - 추가 이벤트
+    const handleSubCatSaveClick = ({value}:any) => {
+        updateSubCategory((subCategory) => {
+            subCategory.push({
+                id: randomId(),
+                label: value,
+                isUse: true
+            });
+        });
+    }
+
+    const handleAddFormOpen = () => {
+        setAddFormOpen(true);
+    };
+
+    const handleAddFormClose = () => {
+        setAddFormOpen(false);
+    };
 
     return (
         <div style={{display: 'flex', alignItems: 'start', justifyContent: 'center'}}>
@@ -34,7 +148,7 @@ function Category() {
                             <ListItem disablePadding>
                                 <ListItemButton
                                     key={item.id}
-                                    selected={selectedCategory === item.id}
+                                    selected={category === item.id}
                                     onClick={() => handleCategoryClick(item.id)}
                                 >
                                     <ListItemIcon>
@@ -65,6 +179,7 @@ function Category() {
                                     variant="outlined" 
                                     size="small" 
                                     startIcon={<AddIcon />}
+                                    onClick={handleAddFormOpen}
                                 >
                                     추가
                                 </Button>
@@ -79,31 +194,78 @@ function Category() {
                         }}
                         dense={true}
                     >
-                        {_categoryCode.map(item => (
+                        {subCategory ? 
+                            subCategory.map(item => (
                             <>
-                            <ListItem
-                                secondaryAction={
-                                    <IconButton edge="end" aria-label="delete">
-                                        <ClearIcon />
-                                    </IconButton>
-                                }
-                            >
-                                <ListItemText primary={item.label} />
-                                <Switch
-                                    edge="end"
-                                    // onChange={handleToggle('wifi')}
-                                    // checked={checked.indexOf('wifi') !== -1}
-                                    inputProps={{
-                                        'aria-labelledby': 'switch-list-label-wifi',
-                                    }}
-                                />
-                            </ListItem>
-                            <Divider variant="middle" component="li" />
+                                <ListItem
+                                    secondaryAction={
+                                        <IconButton 
+                                            id={item.id}
+                                            edge="end" 
+                                            aria-label="delete"
+                                            onClick={handleDeleteClick}
+                                        >
+                                            <ClearIcon />
+                                        </IconButton>
+                                    }
+                                    key={item.id}
+                                >
+                                    <ListItemText primary={item.label} />
+                                    <Switch
+                                        edge="end"
+                                        id={item.id}
+                                        onChange={handleIsUseChange}
+                                        checked={item.isUse}
+                                        inputProps={{
+                                            'aria-labelledby': 'switch-list-label-wifi',
+                                        }}
+                                    />
+                                </ListItem>
+                                <Divider variant="middle" component="li" />
                             </>
-                        ))}
+                            ))
+                        :
+                            null
+                        }
                     </List>
                 </nav>
             </Box>
+
+            <Dialog
+                open={addFormOpen}
+                onClose={handleAddFormClose}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.currentTarget);
+                        const formJson = Object.fromEntries((formData as any).entries());
+                        handleSubCatSaveClick(formJson);
+                        handleAddFormClose();
+                    },
+                }}
+            >
+                <DialogTitle>하위 카테고리</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        하위 카테고리 명을 입력하세요.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="value"
+                        name="value"
+                        label="하위 카테고리 명"
+                        fullWidth
+                        variant="standard"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleAddFormClose}>Cancel</Button>
+                    <Button type="submit">Save</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
