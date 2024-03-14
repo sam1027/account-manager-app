@@ -5,8 +5,8 @@ import Expenditure from "./pages/Expenditure";
 import Income from "./pages/Income";
 import Main from "./pages/Main";
 import Account from "./pages/setting/Account";
-import Bank from "./pages/setting/Account";
 import Card from "./pages/setting/Card";
+import Category from "./pages/setting/Category";
 import RegularExpenditure from "./pages/setting/RegularExpenditure";
 import RegularIncome from "./pages/setting/RegularIncome";
 import Root from "./Root";
@@ -49,6 +49,11 @@ const router = createBrowserRouter([
             {
                 path: "setting/account",
                 element: <Account />,
+                errorElement: <SystemError />
+            },
+            {
+                path: "setting/category",
+                element: <Category />,
                 errorElement: <SystemError />
             },
         ],

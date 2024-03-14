@@ -197,11 +197,15 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                                 </ListItemIcon>
                                 <ListItemText primary="계좌 관리" />
                             </ListItemButton>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton 
+                                selected={pathname === "/setting/category"}
+                                onClick={(event) => handleListItemClick(event, "setting/category")}
+                                sx={{ pl: 4 }}
+                            >
                                 <ListItemIcon>
                                     <CategoryIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="항목 관리" />
+                                <ListItemText primary="카테고리 관리" />
                             </ListItemButton>
                         </List>
                     </Collapse>

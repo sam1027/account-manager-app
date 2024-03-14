@@ -70,3 +70,11 @@ export const _expdItemCode = [
     { value: '4', label: '문화생활' },
     { value: '5', label: '생필품' },
 ];
+
+// 카테고리
+export const _categoryCode = [
+    { id: 'bank', label: '금융기관'},
+    { id: 'cardCorp', label: '카드사'},
+    { id: 'incomeSource', label: '소득원'},
+    { id: 'expdItem', label: '지출항목'},
+];

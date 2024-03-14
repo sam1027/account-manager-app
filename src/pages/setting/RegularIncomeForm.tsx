@@ -75,6 +75,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 <TextField
                     id="month"
                     name="month"
+                    hidden={selectedCycle !== '1'}
                     disabled={selectedCycle !== '1'}
                     select
                     label="월(Month)"
@@ -91,6 +92,7 @@ function RegularIncomeForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 <TextField
                     id="date"
                     name="date"
+                    hidden={selectedCycle === '3'}
                     disabled={selectedCycle === '3'}
                     select
                     label="일(Date)"
