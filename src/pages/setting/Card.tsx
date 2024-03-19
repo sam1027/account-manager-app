@@ -4,6 +4,7 @@ import { randomId } from "@mui/x-data-grid-generator";
 import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-grid";
 import { _bank, _cardCorp, _cardType } from '../../utils/cmnCode';
 import CardForm from './CardForm';
+import HelmetTitle from '../../components/HelmetTitle';
 
 function Card() {
     const initialRows: GridRowsProp = [
@@ -65,7 +66,7 @@ function Card() {
 
     return (
         <div>
-            <h1>카드 관리</h1> 
+            <HelmetTitle title="설정 | 카드 관리" />
 
             <Grid 
                 initialRows={initialRows} 

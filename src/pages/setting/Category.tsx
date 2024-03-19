@@ -19,6 +19,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { randomId } from '@mui/x-data-grid-generator';
+import HelmetTitle from '../../components/HelmetTitle';
 
 interface ISubCategory{
     id:string;
@@ -135,6 +136,8 @@ function Category() {
 
     return (
         <div style={{display: 'flex', alignItems: 'start', justifyContent: 'center'}}>
+            <HelmetTitle title="설정 | 카테고리 관리" />
+
             <Box sx={{ width: '50%', maxWidth: 500, bgcolor: 'background.paper' }}>
                 <nav aria-label="main mailbox folders">
                     <List

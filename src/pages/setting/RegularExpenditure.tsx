@@ -5,6 +5,7 @@ import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode, _expdItemCode, _cardCode, _expdWayCode } from '../../utils/cmnCode';
 import { Box } from '@mui/material';
 import RegularExpenditureForm from './RegularExpenditureForm';
+import HelmetTitle from '../../components/HelmetTitle';
 
 function RegularExpenditure() {
     const initialRows: GridRowsProp = [
@@ -156,6 +157,8 @@ function RegularExpenditure() {
 
     return (
         <Box>
+            <HelmetTitle title="설정 | 정기 지출" />
+
             <Grid 
                 initialRows={initialRows} 
                 columns={columns} 

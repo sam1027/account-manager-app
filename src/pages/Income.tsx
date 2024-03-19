@@ -6,6 +6,7 @@ import {
 import Grid, { EGridType } from '../components/Grid';
 import { GridColDef, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
 import { _accountCode, _incomeSourceCode } from '../utils/cmnCode';
+import HelmetTitle from '../components/HelmetTitle';
 
 const initialRows: GridRowsProp = [
     { id: randomId(), ocrDate: randomCreatedDate(), amount: 20000, source: '1', account: '1', content: '기타1' },
@@ -67,7 +68,7 @@ const columns: GridColDef[] = [
 function Income() {
     return (
         <div>
-            <h1>수입</h1>
+            <HelmetTitle title="수입" />
 
             <Grid initialRows={initialRows} columns={columns} gridType={EGridType.INLINE_TOOLBAR_MODIFY} />
         </div>

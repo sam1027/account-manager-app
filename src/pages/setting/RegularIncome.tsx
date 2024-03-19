@@ -4,6 +4,7 @@ import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode } from '../../utils/cmnCode';
 import RegularIncomeForm from './RegularIncomeForm';
+import HelmetTitle from '../../components/HelmetTitle';
 
 function RegularIncome() {
     const initialRows: GridRowsProp = [
@@ -111,6 +112,8 @@ function RegularIncome() {
 
     return (
         <div>
+            <HelmetTitle title="설정 | 정기 수입" />
+
             <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
