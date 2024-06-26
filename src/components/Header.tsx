@@ -96,7 +96,7 @@ function Header({drawerWidth, open, handleDrawerClose, handleDrawerOpen}:IHeader
                     <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" noWrap component="div">
-                    알로하 가계부
+                    Account Manager
                 </Typography>
                 </Toolbar>
             </AppBar>

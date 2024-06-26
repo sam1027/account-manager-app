@@ -20,6 +20,10 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { randomId } from '@mui/x-data-grid-generator';
 import HelmetTitle from '../../components/HelmetTitle';
+import { getAllUser } from '../../api/user';
+import {useQuery} from '@tanstack/react-query';
+import { changeCodeUseYn, getCodeGrpList, getCodeList } from '../../api/code';
+import { ICode, ICodeGrp } from '../../types/codeType';
 
 interface ISubCategory{
     id:string;
@@ -28,91 +32,44 @@ interface ISubCategory{
 }
 
 function Category() {
-    const [category, setCategory] = React.useState("bank");
+    const [codeGrpId, setCodeGrpId] = React.useState("");
     const [subCategory, updateSubCategory] = useImmer<ISubCategory[]>([]);
     const [addFormOpen, setAddFormOpen] = React.useState(false);
 
-    React.useEffect(() => {
-        findSubCatList();
-    }, [category]);
+    const {data:codeGrpList, isLoading:isCodegrplistLoading} = useQuery<ICodeGrp[]>({
+        queryKey: ['codeGrpList'],
+        queryFn: getCodeGrpList,
+    });
+
+    const {data:codeList, isLoading:isCodeListLoading, refetch} = useQuery<ICode[]>({
+        queryKey: ['codeList'],
+        queryFn: () => getCodeList(codeGrpId),
+        enabled: false,
+    });
 
     React.useEffect(() => {
-        console.log('subCategory => ');
-        console.log(subCategory);
-    }, [subCategory]);
-    
-    // 카테고리 클릭 이벤트
-    const handleCategoryClick = (id:string) => {
-        setCategory(() => id);
-    }
+        refetch();
+    }, [codeGrpId]);
 
-    // 하위 카테고리 - 목록 조회 함수
-    const findSubCatList = () => {
-        updateSubCategory((subCategory) => {
-            subCategory.splice(0);
-        });
-
-        if(category === 'bank'){
-            _bank.map((item, idx)=> {
-                updateSubCategory((subCategory) => {
-                    subCategory.push({
-                        id: item.value,
-                        label: item.label,
-                        isUse: idx % 2 === 1
-                    });
-                });
-            });
-        }
-        else if(category === 'cardCorp'){
-            _cardCorp.map((item, idx)=> {
-                updateSubCategory((subCategory) => {
-                    subCategory.push({
-                        id: item.value,
-                        label: item.label,
-                        isUse: idx % 2 === 1
-                    });
-                });
-            });
-        }
-        else if(category === 'incomeSource'){
-            _incomeSourceCode.map((item, idx)=> {
-                updateSubCategory((subCategory) => {
-                    subCategory.push({
-                        id: item.value,
-                        label: item.label,
-                        isUse: idx % 2 === 1
-                    });
-                });
-            });
-        }
-        else if(category === 'expdItem'){
-            _expdItemCode.map((item, idx)=> {
-                updateSubCategory((subCategory) => {
-                    subCategory.push({
-                        id: item.value,
-                        label: item.label,
-                        isUse: idx % 2 === 1
-                    });
-                });
-            });
-        }
+    // 코드그룹 클릭 이벤트
+    const handleCodeGrpClick = (id:string) => {
+        setCodeGrpId(() => id);
     }
 
     // 하위 카테고리 - 사용유무 변경 이벤트
-    const handleIsUseChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        updateSubCategory((subCategory) => {
-            subCategory.map(item => {
-                if(item.id === event.target.id) item.isUse = checked;
-            })
-        });
+    const handleIsUseChange = async (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        const codeId = event.target.id;
+        const useYn = checked ? "Y" : "N";
+        await changeCodeUseYn(codeGrpId, codeId, useYn);
+        await refetch();
     }
 
     // 하위 카테고리 - 삭제 이벤트
     const handleDeleteClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        updateSubCategory((subCategory) => {
-            const targetIdx = subCategory.findIndex(item => item.id === event.currentTarget.id);
-            subCategory.splice(targetIdx, 1);
-        });
+        // updateSubCategory((subCategory) => {
+        //     const targetIdx = subCategory.findIndex(item => item.id === event.currentTarget.id);
+        //     subCategory.splice(targetIdx, 1);
+        // });
     }
 
     // 하위 카테고리 - 추가 이벤트
@@ -147,17 +104,19 @@ function Category() {
                             </ListSubheader>
                         }
                     >
-                        {_categoryCode.map(item => (
+                        {!isCodegrplistLoading && 
+                        codeGrpList &&
+                        codeGrpList.map(item => (
                             <ListItem disablePadding>
                                 <ListItemButton
-                                    key={item.id}
-                                    selected={category === item.id}
-                                    onClick={() => handleCategoryClick(item.id)}
+                                    key={item.cd_grp_id}
+                                    selected={codeGrpId === item.cd_grp_id}
+                                    onClick={() => handleCodeGrpClick(item.cd_grp_id)}
                                 >
                                     <ListItemIcon>
                                         <InboxIcon />
                                     </ListItemIcon>
-                                    <ListItemText primary={item.label} />
+                                    <ListItemText primary={item.cd_grp_nm} />
                                 </ListItemButton>
                             </ListItem>
                         ))}
@@ -197,38 +156,38 @@ function Category() {
                         }}
                         dense={true}
                     >
-                        {subCategory ? 
-                            subCategory.map(item => (
-                            <>
-                                <ListItem
-                                    secondaryAction={
-                                        <IconButton 
-                                            id={item.id}
-                                            edge="end" 
-                                            aria-label="delete"
-                                            onClick={handleDeleteClick}
-                                        >
-                                            <ClearIcon />
-                                        </IconButton>
-                                    }
-                                    key={item.id}
-                                >
-                                    <ListItemText primary={item.label} />
-                                    <Switch
-                                        edge="end"
-                                        id={item.id}
-                                        onChange={handleIsUseChange}
-                                        checked={item.isUse}
-                                        inputProps={{
-                                            'aria-labelledby': 'switch-list-label-wifi',
-                                        }}
-                                    />
-                                </ListItem>
-                                <Divider variant="middle" component="li" />
-                            </>
-                            ))
-                        :
-                            null
+                        {
+                        !isCodeListLoading &&
+                        codeList &&
+                        codeList.map(item => (
+                        <>
+                            <ListItem
+                                secondaryAction={
+                                    <IconButton 
+                                        id={item.cd_id}
+                                        edge="end" 
+                                        aria-label="delete"
+                                        onClick={handleDeleteClick}
+                                    >
+                                        <ClearIcon />
+                                    </IconButton>
+                                }
+                                key={item.cd_id}
+                            >
+                                <ListItemText primary={item.cd_nm} />
+                                <Switch
+                                    edge="end"
+                                    id={item.cd_id}
+                                    onChange={handleIsUseChange}
+                                    checked={item.use_yn == 'Y' ? true : false}
+                                    inputProps={{
+                                        'aria-labelledby': 'switch-list-label-wifi',
+                                    }}
+                                />
+                            </ListItem>
+                            <Divider variant="middle" component="li" />
+                        </>
+                        ))
                         }
                     </List>
                 </nav>

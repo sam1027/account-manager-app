@@ -5,6 +5,8 @@ function Main() {
         <div>
             <HelmetTitle title="홈" />
             Main
+            <br />
+            <a href="/oauth2/authorization/google">로그인</a>
         </div>
     );
 }
