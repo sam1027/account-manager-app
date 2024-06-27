@@ -11,7 +11,7 @@ export const getCodeList = async (codeGrpId?:string) => {
 
 export const changeCodeUseYn = async (codeGrpId:string, codeId:string, useYn:string) => {
     await fetch(`http://localhost:3030/code/useyn`, {
-        method: "PUT", //method PUT으로 변경
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
@@ -19,6 +19,33 @@ export const changeCodeUseYn = async (codeGrpId:string, codeId:string, useYn:str
             codeGrpId,
             codeId,
             useYn,
+        }),
+    });
+}
+
+export const deleteCode = async (codeGrpId:string, codeId:string) => {
+    await fetch(`http://localhost:3030/code`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            codeGrpId,
+            codeId,
+        }),
+    });
+}
+
+export const insertCode = async (codeGrpId:string, codeId:string, codeName: string) => {
+    await fetch(`http://localhost:3030/code`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            codeGrpId,
+            codeId,
+            codeName,
         }),
     });
 }

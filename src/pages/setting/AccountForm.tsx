@@ -7,7 +7,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { InputAdornment, MenuItem } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
-import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode, _bank } from '../../utils/cmnCode';
+import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
+import { useQuery } from '@tanstack/react-query';
+import { ICode } from '../../types/codeType';
+import { getCodeList } from '../../api/code';
 
 interface IDialogItem {
     cycle: number;
@@ -25,6 +28,11 @@ interface IRegularIncomeForm{
 }
 
 function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
+    const {data:bankCodes, isLoading:isBankLoading} = useQuery<ICode[]>({
+        queryKey: ['backCodes'],
+        queryFn: () => getCodeList('CDG0004'),
+    });
+
     return (
         <Dialog
             open={dialogOpen}
@@ -50,23 +58,27 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </DialogContentText> */}
 
                 <TextField
-                    id="bank"
+                    id="bankSelect"
+                    name='bank'
                     select
                     label="금융기관"
-                    defaultValue={"1"}
+                    defaultValue={bankCodes ? bankCodes[0].cd_id : ""}
                     margin="dense"
                     required
                     fullWidth
                     style = {{width: 150}}
                 >
-                    {_bank.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
+                    {!isBankLoading &&
+                    bankCodes &&
+                    bankCodes.map((option) => (
+                        <MenuItem key={option.cd_id} value={option.cd_id}>
+                            {option.cd_nm}
                         </MenuItem>
                     ))}
                 </TextField>
                 <TextField
                     id="accountName"
+                    name='accountName'
                     label="계좌명"
                     required
                     fullWidth
@@ -75,6 +87,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 />
                 <TextField
                     id="accountNumber"
+                    name='accountNumber'
                     label="계좌번호"
                     fullWidth
                     margin="normal"
@@ -82,6 +95,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 />
                 <TextField
                     id="accountOwner"
+                    name='accountOwner'
                     label="예금주"
                     fullWidth
                     margin="normal"
@@ -91,8 +105,8 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     error={false}
                     autoFocus
                     margin="normal"
-                    id="firstBalance"
-                    name="firstBalance"
+                    id="accountInitMoney"
+                    name="accountInitMoney"
                     label="초기 잔액(원)"
                     fullWidth
                     variant="standard"

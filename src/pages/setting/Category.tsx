@@ -7,33 +7,22 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/Inbox';
 import ListSubheader from '@mui/material/ListSubheader';
-import { _bank, _cardCorp, _categoryCode, _expdItemCode, _incomeSourceCode } from '../../utils/cmnCode';
 import { Button, Divider, IconButton, Switch } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
-import {useImmer} from 'use-immer';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { randomId } from '@mui/x-data-grid-generator';
 import HelmetTitle from '../../components/HelmetTitle';
-import { getAllUser } from '../../api/user';
-import {useQuery} from '@tanstack/react-query';
-import { changeCodeUseYn, getCodeGrpList, getCodeList } from '../../api/code';
-import { ICode, ICodeGrp } from '../../types/codeType';
-
-interface ISubCategory{
-    id:string;
-    label:string;
-    isUse:boolean;
-}
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { changeCodeUseYn, deleteCode, getCodeGrpList, getCodeList, insertCode } from '../../api/code';
+import { ICode, ICodeGrp, ICodeParams } from '../../types/codeType';
 
 function Category() {
+    const queryClient = useQueryClient();
     const [codeGrpId, setCodeGrpId] = React.useState("");
-    const [subCategory, updateSubCategory] = useImmer<ISubCategory[]>([]);
     const [addFormOpen, setAddFormOpen] = React.useState(false);
 
     const {data:codeGrpList, isLoading:isCodegrplistLoading} = useQuery<ICodeGrp[]>({
@@ -48,7 +37,7 @@ function Category() {
     });
 
     React.useEffect(() => {
-        refetch();
+        if(codeGrpId) refetch();
     }, [codeGrpId]);
 
     // 코드그룹 클릭 이벤트
@@ -56,31 +45,78 @@ function Category() {
         setCodeGrpId(() => id);
     }
 
-    // 하위 카테고리 - 사용유무 변경 이벤트
-    const handleIsUseChange = async (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    const ChangeCodeUseYnFn = useMutation({
+        mutationFn: ({codeId, useYn}:ICodeParams) => {
+            return changeCodeUseYn(codeGrpId, codeId, useYn!)
+        },
+        onSuccess: () => { 
+            // 요청 성공
+            // 요청 성공 시 해당 queryKey 유효성 제거
+            queryClient.invalidateQueries({queryKey: ['codeList']});
+            refetch();
+        },
+        onError: () => { 
+            // 에러 발생 
+        },
+        onSettled: () => {
+            // 결과에 관계 없이 무언가 실행됨
+        }
+    });
+
+    const DeleteCodeFn = useMutation({
+        mutationFn: ({codeId}:ICodeParams) => {
+            console.log("2: " + codeId)
+            return deleteCode(codeGrpId, codeId);
+        },
+        onSuccess: () => { 
+            // 요청 성공
+            // 요청 성공 시 해당 queryKey 유효성 제거
+            queryClient.invalidateQueries({queryKey: ['codeList']});
+            refetch();
+        },
+        onError: () => { 
+            // 에러 발생 
+        },
+        onSettled: () => {
+            // 결과에 관계 없이 무언가 실행됨
+        }
+    })
+
+    const InsertCodeFn = useMutation({
+        mutationFn: (obj:ICodeParams) => {
+            return insertCode(codeGrpId, obj.codeId, obj.codeName!);
+        },
+        onSuccess: () => { 
+            // 요청 성공
+            // 요청 성공 시 해당 queryKey 유효성 제거
+            queryClient.invalidateQueries({queryKey: ['codeList']});
+            handleAddFormClose();
+            refetch();
+        },
+        onError: () => { 
+            // 에러 발생 
+        },
+        onSettled: () => {
+            // 결과에 관계 없이 무언가 실행됨
+        }
+    })
+
+    // 코드 - 사용유무 변경 이벤트
+    const handleIsUseChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         const codeId = event.target.id;
         const useYn = checked ? "Y" : "N";
-        await changeCodeUseYn(codeGrpId, codeId, useYn);
-        await refetch();
+        ChangeCodeUseYnFn.mutate({codeId, useYn});
     }
 
-    // 하위 카테고리 - 삭제 이벤트
+    // 코드 - 삭제 이벤트
     const handleDeleteClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        // updateSubCategory((subCategory) => {
-        //     const targetIdx = subCategory.findIndex(item => item.id === event.currentTarget.id);
-        //     subCategory.splice(targetIdx, 1);
-        // });
+        const codeId = event.currentTarget.id;
+        DeleteCodeFn.mutate({codeId});
     }
 
-    // 하위 카테고리 - 추가 이벤트
-    const handleSubCatSaveClick = ({value}:any) => {
-        updateSubCategory((subCategory) => {
-            subCategory.push({
-                id: randomId(),
-                label: value,
-                isUse: true
-            });
-        });
+    // 코드 - 추가 이벤트
+    const handleCodeSaveClick = (obj:ICodeParams) => {
+        InsertCodeFn.mutate(obj);
     }
 
     const handleAddFormOpen = () => {
@@ -97,7 +133,7 @@ function Category() {
 
             <Box sx={{ width: '50%', maxWidth: 500, bgcolor: 'background.paper' }}>
                 <nav aria-label="main mailbox folders">
-                    <List
+                    <List 
                         subheader={
                             <ListSubheader component="div" id="nested-list-subheader">
                                 카테고리
@@ -107,7 +143,7 @@ function Category() {
                         {!isCodegrplistLoading && 
                         codeGrpList &&
                         codeGrpList.map(item => (
-                            <ListItem disablePadding>
+                            <ListItem key={item.cd_grp_id} disablePadding>
                                 <ListItemButton
                                     key={item.cd_grp_id}
                                     selected={codeGrpId === item.cd_grp_id}
@@ -137,14 +173,14 @@ function Category() {
                                 }}
                             >
                                 하위 카테고리
-                                <Button 
+                                {codeGrpId && <Button 
                                     variant="outlined" 
                                     size="small" 
                                     startIcon={<AddIcon />}
                                     onClick={handleAddFormOpen}
                                 >
                                     추가
-                                </Button>
+                                </Button>}
                             </ListSubheader>
                         }
                         sx={{
@@ -160,8 +196,9 @@ function Category() {
                         !isCodeListLoading &&
                         codeList &&
                         codeList.map(item => (
-                        <>
+                            <>
                             <ListItem
+                                key={item.cd_id}
                                 secondaryAction={
                                     <IconButton 
                                         id={item.cd_id}
@@ -172,7 +209,6 @@ function Category() {
                                         <ClearIcon />
                                     </IconButton>
                                 }
-                                key={item.cd_id}
                             >
                                 <ListItemText primary={item.cd_nm} />
                                 <Switch
@@ -202,22 +238,29 @@ function Category() {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries((formData as any).entries());
-                        handleSubCatSaveClick(formJson);
-                        handleAddFormClose();
+                        const params:ICodeParams = JSON.parse(JSON.stringify(formJson));
+                        handleCodeSaveClick(params);
                     },
                 }}
             >
                 <DialogTitle>하위 카테고리</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        하위 카테고리 명을 입력하세요.
-                    </DialogContentText>
                     <TextField
                         autoFocus
                         required
                         margin="dense"
-                        id="value"
-                        name="value"
+                        id="codeId"
+                        name="codeId"
+                        label="하위 카테고리 아이디"
+                        fullWidth
+                        variant="standard"
+                    />
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="codeName"
+                        name="codeName"
                         label="하위 카테고리 명"
                         fullWidth
                         variant="standard"
