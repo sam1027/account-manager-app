@@ -20,3 +20,15 @@ export interface ICodeParams{
     codeName?: string,
     useYn?: string,
 }
+
+export const CODE_GROUP_ID = {
+    PAY_METHOD: 'CDG0001', // 결재 수단
+    CYCLE: 'CDG0002', // 주기
+    INCOME_SOURCE: 'CDG0003', // 소득원
+    BANK: 'CDG0004', // 금융기관
+    CARD_TYPE: 'CDG0005', // 카드 구분
+    CARD_CORP: 'CDG0006', // 카드사
+    EXPEND_TYPE: 'CDG0007', // 지출 항목
+} as const;
+
+type CODE_GROUP_ID = typeof CODE_GROUP_ID[keyof typeof CODE_GROUP_ID];

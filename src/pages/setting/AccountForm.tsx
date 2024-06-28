@@ -8,9 +8,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { InputAdornment, MenuItem } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
-import { useQuery } from '@tanstack/react-query';
-import { ICode } from '../../types/codeType';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { CODE_GROUP_ID, ICode } from '../../types/codeType';
 import { getCodeList } from '../../api/code';
+import { insertAccount } from '../../api/account';
+import { IAccount } from '../../types/accountType';
 
 interface IDialogItem {
     cycle: number;
@@ -28,10 +30,33 @@ interface IRegularIncomeForm{
 }
 
 function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
+    // 금융기관 코드목록 조회    
     const {data:bankCodes, isLoading:isBankLoading} = useQuery<ICode[]>({
         queryKey: ['backCodes'],
-        queryFn: () => getCodeList('CDG0004'),
+        queryFn: () => getCodeList(CODE_GROUP_ID.BANK),
     });
+
+    const InsertAccountFn = useMutation({
+        mutationFn: (obj:IAccount) => insertAccount(obj),
+        onSuccess: () => { 
+            // 요청 성공
+            // 요청 성공 시 해당 queryKey 유효성 제거
+            // queryClient.invalidateQueries({queryKey: ['codeList']});
+            // refetch();
+            handleDialogClose();
+        },
+        onError: () => { 
+            // 에러 발생 
+        },
+        onSettled: () => {
+            // 결과에 관계 없이 무언가 실행됨
+        }
+    });
+
+    // 계좌 추가 이벤트
+    const handleSaveClick = (obj:IAccount) => {
+        InsertAccountFn.mutate(obj)
+    }
 
     return (
         <Dialog
@@ -46,7 +71,8 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     const formData = new FormData(event.currentTarget);
                     const formJson = Object.fromEntries((formData as any).entries()) as IDialogItem;
                     console.log(formJson);
-                    handleDialogClose();
+                    const params:IAccount = JSON.parse(JSON.stringify(formJson));
+                    handleSaveClick(params);
                 },
             }}
         >
@@ -59,7 +85,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
 
                 <TextField
                     id="bankSelect"
-                    name='bank'
+                    name='bk_id'
                     select
                     label="금융기관"
                     defaultValue={bankCodes ? bankCodes[0].cd_id : ""}
@@ -78,7 +104,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 </TextField>
                 <TextField
                     id="accountName"
-                    name='accountName'
+                    name='acnt_nm'
                     label="계좌명"
                     required
                     fullWidth
@@ -87,7 +113,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 />
                 <TextField
                     id="accountNumber"
-                    name='accountNumber'
+                    name='acnt_no'
                     label="계좌번호"
                     fullWidth
                     margin="normal"
@@ -95,7 +121,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 />
                 <TextField
                     id="accountOwner"
-                    name='accountOwner'
+                    name='acnt_owner'
                     label="예금주"
                     fullWidth
                     margin="normal"
@@ -106,7 +132,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     autoFocus
                     margin="normal"
                     id="accountInitMoney"
-                    name="accountInitMoney"
+                    name="acnt_init_money"
                     label="초기 잔액(원)"
                     fullWidth
                     variant="standard"
