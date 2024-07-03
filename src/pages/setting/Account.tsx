@@ -12,9 +12,17 @@ import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { GridRowModesModel } from '@mui/x-data-grid';
+import { CODE_GROUP_ID, ICode } from '../../types/codeType';
+import { getCodeList } from '../../api/code';
 
 function Account() {
     const queryClient = useQueryClient();
+
+    // 금융기관 코드목록 조회    
+    const { data: bankCodes } = useQuery<ICode[]>({
+        queryKey: ['backCodes'],
+        queryFn: () => getCodeList(CODE_GROUP_ID.BANK),
+    });
 
     // 조회
     const { data, isLoading, refetch } = useQuery<IAccount[]>({
@@ -139,17 +147,11 @@ function Account() {
                         setRowSelectionModel(newRowSelectionModel);
                     }}
                     rowSelectionModel={rowSelectionModel}
+                    getRowId={(row) => row.acnt_id}
                 />
-                // <Grid 
-                //     initialRows={data} 
-                //     columns={columns} 
-                //     gridType={EGridType.TOOLBAR_MODIFY} 
-                //     addType={EAddType.DIALOG} 
-                //     handleDialogAddClick={handleDialogAddClick} 
-                // />
             }
 
-            <AccountForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
+            <AccountForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} bankCodes={bankCodes} />
         </div>
     );
 }

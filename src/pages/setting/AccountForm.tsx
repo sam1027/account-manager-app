@@ -14,36 +14,23 @@ import { getCodeList } from '../../api/code';
 import { insertAccount } from '../../api/account';
 import { IAccount } from '../../types/accountType';
 
-interface IDialogItem {
-    cycle: number;
-    month: number;
-    date: number;
-    amount: number;
-    source: number;
-    finance: number;
-    content: string;
-}
-
-interface IRegularIncomeForm{
+interface IRegularIncomeForm {
     dialogOpen: boolean;
     handleDialogClose: () => void;
+    bankCodes?: ICode[];
 }
 
-function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
-    // 금융기관 코드목록 조회    
-    const {data:bankCodes, isLoading:isBankLoading} = useQuery<ICode[]>({
-        queryKey: ['backCodes'],
-        queryFn: () => getCodeList(CODE_GROUP_ID.BANK),
-    });
+function AccountForm({ dialogOpen, handleDialogClose, bankCodes }: IRegularIncomeForm) {
 
+    // 저장
     const InsertAccountFn = useMutation({
-        mutationFn: (obj:IAccount) => insertAccount(obj),
-        onSuccess: () => { 
+        mutationFn: (obj: IAccount) => insertAccount(obj),
+        onSuccess: () => {
             // 요청 성공
             // 요청 성공 시 해당 queryKey 유효성 제거
             handleDialogClose();
         },
-        onError: () => { 
+        onError: () => {
             // 에러 발생 
         },
         onSettled: () => {
@@ -52,7 +39,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
     });
 
     // 계좌 추가 이벤트
-    const handleSaveClick = (obj:IAccount) => {
+    const handleSaveClick = (obj: IAccount) => {
         InsertAccountFn.mutate(obj)
     }
 
@@ -67,10 +54,9 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                 onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault();
                     const formData = new FormData(event.currentTarget);
-                    const formJson = Object.fromEntries((formData as any).entries()) as IDialogItem;
+                    const formJson = Object.fromEntries((formData as any).entries()) as IAccount;
                     console.log(formJson);
-                    const params:IAccount = JSON.parse(JSON.stringify(formJson));
-                    handleSaveClick(params);
+                    handleSaveClick(formJson);
                 },
             }}
         >
@@ -90,15 +76,16 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     margin="dense"
                     required
                     fullWidth
-                    style = {{width: 150}}
+                    style={{ width: 150 }}
                 >
-                    {!isBankLoading &&
-                    bankCodes &&
-                    bankCodes.map((option) => (
-                        <MenuItem key={option.cd_id} value={option.cd_id}>
-                            {option.cd_nm}
-                        </MenuItem>
-                    ))}
+                    {
+                        bankCodes &&
+                        bankCodes.map((option) => (
+                            <MenuItem key={option.cd_id} value={option.cd_id}>
+                                {option.cd_nm}
+                            </MenuItem>
+                        ))
+                    }
                 </TextField>
                 <TextField
                     id="accountName"
@@ -107,7 +94,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     required
                     fullWidth
                     margin="normal"
-                    inputProps={{ maxLength: 50}}
+                    inputProps={{ maxLength: 50 }}
                 />
                 <TextField
                     id="accountNumber"
@@ -115,7 +102,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     label="계좌번호"
                     fullWidth
                     margin="normal"
-                    inputProps={{ maxLength: 50}}
+                    inputProps={{ maxLength: 50 }}
                 />
                 <TextField
                     id="accountOwner"
@@ -123,7 +110,7 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
                     label="예금주"
                     fullWidth
                     margin="normal"
-                    inputProps={{ maxLength: 50}}
+                    inputProps={{ maxLength: 50 }}
                 />
                 <TextField
                     error={false}
