@@ -1,5 +1,5 @@
 import React from 'react';
-import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-grid";
+import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode } from '../../utils/cmnCode';
@@ -27,24 +27,24 @@ function RegularIncome() {
             , headerName: '월(Month)'
             , width: 100
             , editable: false
-            , valueFormatter: (params: GridValueFormatterParams<number>) => {
-                if (params.value == null) {
-                  return '';
-                }
-                return `${params.value}월`;
-            },
+            // , valueFormatter: (params: GridValueFormatterParams<number>) => {
+            //     if (params.value == null) {
+            //       return '';
+            //     }
+            //     return `${params.value}월`;
+            // },
         },
         { 
             field: 'date'
             , headerName: '일(Date)'
             , width: 100
             , editable: false
-            , valueFormatter: (params: GridValueFormatterParams<number>) => {
-                if (params.value == null) {
-                  return '';
-                }
-                return `${params.value}일`;
-            },
+            // , valueFormatter: (params: GridValueFormatterParams<number>) => {
+            //     if (params.value == null) {
+            //       return '';
+            //     }
+            //     return `${params.value}일`;
+            // },
         },
         { 
             field: 'amount'
@@ -53,12 +53,12 @@ function RegularIncome() {
             , width: 100
             , editable: false
             , align: 'right'
-            , valueFormatter: (params: GridValueFormatterParams<number>) => {
-                if (params.value == null) {
-                  return '';
-                }
-                return `${params.value.toLocaleString()}`;
-            },
+            // , valueFormatter: (params: GridValueFormatterParams<number>) => {
+            //     if (params.value == null) {
+            //       return '';
+            //     }
+            //     return `${params.value.toLocaleString()}`;
+            // },
         },
         // 카테고리 항목으로 관리
         { 

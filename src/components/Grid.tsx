@@ -224,9 +224,9 @@ function Grid({initialRows, columns, gridType, addType=EAddType.NEW_ROW, handleD
                 onRowModesModelChange={handleRowModesModelChange}
                 onRowEditStop={handleRowEditStop}
                 processRowUpdate={processRowUpdate}
-                slots={{
-                    toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
-                }}
+                // slots={{
+                //     toolbar: (gridType === EGridType.TOOLBAR_MODIFY || gridType === EGridType.INLINE_TOOLBAR_MODIFY) ? EditToolbar : null,
+                // }}
                 slotProps={{
                     toolbar: { setRows, 
                         setRowModesModel, 

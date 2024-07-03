@@ -1,16 +1,16 @@
 export const getCodeGrpList = async () => {
-    const data = await fetch("http://localhost:3030/code/grp/list");
+    const data = await fetch(`${process.env.REACT_APP_SERVER_URL}/code/grp/list`);
     return data.json();
 }
 
 export const getCodeList = async (codeGrpId?:string) => {
     if(!codeGrpId) return ;
-    const data = await fetch(`http://localhost:3030/code/${codeGrpId}`);
+    const data = await fetch(`${process.env.REACT_APP_SERVER_URL}/code/${codeGrpId}`);
     return data.json();
 }
 
 export const changeCodeUseYn = async (codeGrpId:string, codeId:string, useYn:string) => {
-    await fetch(`http://localhost:3030/code/useyn`, {
+    await fetch(`${process.env.REACT_APP_SERVER_URL}/code/useyn`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export const changeCodeUseYn = async (codeGrpId:string, codeId:string, useYn:str
 }
 
 export const deleteCode = async (codeGrpId:string, codeId:string) => {
-    await fetch(`http://localhost:3030/code`, {
+    await fetch(`${process.env.REACT_APP_SERVER_URL}/code`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export const deleteCode = async (codeGrpId:string, codeId:string) => {
 }
 
 export const insertCode = async (codeGrpId:string, codeId:string, codeName: string) => {
-    await fetch(`http://localhost:3030/code`, {
+    await fetch(`${process.env.REACT_APP_SERVER_URL}/code`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

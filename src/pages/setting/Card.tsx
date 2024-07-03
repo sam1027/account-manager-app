@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid, { EAddType, EGridType } from '../../components/Grid';
 import { randomId } from "@mui/x-data-grid-generator";
-import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-grid";
+import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { _bank, _cardCorp, _cardType } from '../../utils/cmnCode';
 import CardForm from './CardForm';
 import HelmetTitle from '../../components/HelmetTitle';

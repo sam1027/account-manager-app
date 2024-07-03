@@ -45,6 +45,7 @@ function Category() {
         setCodeGrpId(() => id);
     }
 
+    // 사용여부 변경
     const ChangeCodeUseYnFn = useMutation({
         mutationFn: ({codeId, useYn}:ICodeParams) => {
             return changeCodeUseYn(codeGrpId, codeId, useYn!)
@@ -63,9 +64,9 @@ function Category() {
         }
     });
 
+    // 삭제
     const DeleteCodeFn = useMutation({
         mutationFn: ({codeId}:ICodeParams) => {
-            console.log("2: " + codeId)
             return deleteCode(codeGrpId, codeId);
         },
         onSuccess: () => { 
@@ -82,6 +83,7 @@ function Category() {
         }
     })
 
+    // 추가
     const InsertCodeFn = useMutation({
         mutationFn: (obj:ICodeParams) => {
             return insertCode(codeGrpId, obj.codeId, obj.codeName!);

@@ -1,100 +1,153 @@
 import React from 'react';
 import Grid, { EAddType, EGridType } from '../../components/Grid';
 import { randomId } from "@mui/x-data-grid-generator";
-import { GridColDef, GridRowsProp, GridValueFormatterParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowsProp, GridToolbarContainer, GridSlots, GridRowSelectionModel, useGridApiContext } from "@mui/x-data-grid";
 import { _bank } from '../../utils/cmnCode';
 import AccountForm from './AccountForm';
 import HelmetTitle from '../../components/HelmetTitle';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteAccount, getAccountList } from '../../api/account';
+import { IAccount } from '../../types/accountType';
+import { Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { GridRowModesModel } from '@mui/x-data-grid';
 
 function Account() {
-    const initialRows: GridRowsProp = [
-        { id: randomId(), bank: '1', accountName: "성은 용돈 계좌", accountNumber: "102-324-229348", accountOwner: "유성은", firstBalance: 120000, currentBalance: 4323000 },
-        { id: randomId(), bank: '2', accountName: "성은 용돈 계좌", accountNumber: "102-324-229348", accountOwner: "유성은", firstBalance: 120000, currentBalance: 4323000 },
-        { id: randomId(), bank: '3', accountName: "성은 용돈 계좌", accountNumber: "102-324-229348", accountOwner: "유성은", firstBalance: 120000, currentBalance: 4323000 },
-    ];
+    const queryClient = useQueryClient();
 
-    const columns: GridColDef[] = [
-        { 
-            field: 'bank'
-            , headerName: '금융기관'
-            , width: 150
-            , editable: false
-            , type: 'singleSelect'
-            , valueOptions: _bank
+    // 조회
+    const { data, isLoading, refetch } = useQuery<IAccount[]>({
+        queryKey: ['accountList'],
+        queryFn: getAccountList,
+    })
+
+    // 삭제
+    const DeleteRowsFn = useMutation({
+        mutationFn: () => {
+            const selectedRows = rowSelectionModel as string[]
+            console.log(selectedRows)
+            return deleteAccount(selectedRows);
         },
-        { 
-            field: 'accountName'
-            , headerName: '계좌명'
-            , width: 150
-            , editable: false
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['accountList'] });
+            refetch();
         },
-        { 
-            field: 'accountNumber'
-            , headerName: '계좌번호'
-            , width: 200
-            , editable: false
+        onError: () => {
+
         },
-        { 
-            field: 'accountOwner'
-            , headerName: '예금주'
-            , width: 150
-            , editable: false
-        },
-        { 
-            field: 'firstBalance'
-            , headerName: '초기 잔액(원)'
-            , type: 'number'
-            , width: 150
-            , editable: false
-            , align: 'right'
-            , valueFormatter: (params: GridValueFormatterParams<number>) => {
-                if (params.value == null) {
-                  return '';
-                }
-                return `${params.value.toLocaleString()}`;
-            },
-        },
-        { 
-            field: 'currentBalance'
-            , headerName: '현재 잔액(원)'
-            , type: 'number'
-            , width: 150
-            , editable: false
-            , align: 'right'
-            , valueFormatter: (params: GridValueFormatterParams<number>) => {
-                if (params.value == null) {
-                  return '';
-                }
-                return `${params.value.toLocaleString()}`;
-            },
-        },
-    ];
+        onSettled: () => {
+
+        }
+    });
 
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
     };
-    
+
     const handleDialogClose = () => {
         setDialogOpen(false);
+        queryClient.invalidateQueries({ queryKey: ['accountList'] });
+        refetch();
     };
 
     const handleDialogAddClick = () => {
         handleDialogOpen();
     }
 
+    const handleDeleteRows = () => {
+        DeleteRowsFn.mutate();
+    }
+
+    /** Grid */
+    const columns: GridColDef[] = [
+        {
+            field: 'bk_nm'
+            , headerName: '금융기관'
+            , width: 150
+            , editable: false
+        },
+        {
+            field: 'acnt_nm'
+            , headerName: '계좌명'
+            , width: 150
+            , editable: false
+        },
+        {
+            field: 'acnt_no'
+            , headerName: '계좌번호'
+            , width: 200
+            , editable: false
+        },
+        {
+            field: 'acnt_owner'
+            , headerName: '예금주'
+            , width: 150
+            , editable: false
+        },
+        {
+            field: 'acnt_init_money'
+            , headerName: '초기 잔액(원)'
+            , type: 'number'
+            , width: 150
+            , editable: false
+            , align: 'right'
+        },
+        {
+            field: 'acnt_crnt_money'
+            , headerName: '현재 잔액(원)'
+            , type: 'number'
+            , width: 150
+            , editable: false
+            , align: 'right'
+        },
+    ];
+
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+
+    function EditToolbar() {
+        return (
+            <GridToolbarContainer>
+                <Button color="primary" startIcon={<AddIcon />} onClick={handleDialogAddClick}>
+                    Add
+                </Button>
+                <Button color="primary" startIcon={<RemoveIcon />} onClick={handleDeleteRows}>
+                    Delete
+                </Button>
+            </GridToolbarContainer>
+        );
+    }
+
     return (
         <div>
             <HelmetTitle title="설정 | 계좌 관리" />
 
-            <Grid 
-                initialRows={initialRows} 
-                columns={columns} 
-                gridType={EGridType.TOOLBAR_MODIFY} 
-                addType={EAddType.DIALOG} 
-                handleDialogAddClick={handleDialogAddClick} 
-            />
+            {
+                !isLoading &&
+                data &&
+                <DataGrid
+                    columns={columns}
+                    rows={data}
+                    autoHeight
+                    slots={{
+                        toolbar: EditToolbar as GridSlots['toolbar'],
+                    }}
+                    checkboxSelection
+                    onRowSelectionModelChange={(newRowSelectionModel) => {
+                        setRowSelectionModel(newRowSelectionModel);
+                    }}
+                    rowSelectionModel={rowSelectionModel}
+                />
+                // <Grid 
+                //     initialRows={data} 
+                //     columns={columns} 
+                //     gridType={EGridType.TOOLBAR_MODIFY} 
+                //     addType={EAddType.DIALOG} 
+                //     handleDialogAddClick={handleDialogAddClick} 
+                // />
+            }
 
             <AccountForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
         </div>

@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { InputAdornment, MenuItem } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode } from '../../utils/cmnCode';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CODE_GROUP_ID, ICode } from '../../types/codeType';
 import { getCodeList } from '../../api/code';
 import { insertAccount } from '../../api/account';
@@ -41,8 +41,6 @@ function AccountForm({dialogOpen, handleDialogClose}:IRegularIncomeForm) {
         onSuccess: () => { 
             // 요청 성공
             // 요청 성공 시 해당 queryKey 유효성 제거
-            // queryClient.invalidateQueries({queryKey: ['codeList']});
-            // refetch();
             handleDialogClose();
         },
         onError: () => { 

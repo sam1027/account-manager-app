@@ -4,7 +4,7 @@ import {
     randomId,
 } from '@mui/x-data-grid-generator';
 import Grid, { EGridType } from '../components/Grid';
-import { GridColDef, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
+import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { _accountCode, _incomeSourceCode } from '../utils/cmnCode';
 import HelmetTitle from '../components/HelmetTitle';
 
@@ -29,12 +29,12 @@ const columns: GridColDef[] = [
         , width: 150
         , editable: true
         , align: 'right'
-        , valueFormatter: (params: GridValueFormatterParams<number>) => {
-            if (params.value == null) {
-              return '';
-            }
-            return `${params.value.toLocaleString()}`;
-        },
+        // , valueFormatter: (params: GridValueFormatterParams<number>) => {
+        //     if (params.value == null) {
+        //       return '';
+        //     }
+        //     return `${params.value.toLocaleString()}`;
+        // },
     },
     // 카테고리 항목으로 관리
     { 
