@@ -6,12 +6,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Alert, Link, MenuItem } from '@mui/material';
-import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode, _bank, _cardCorp, _cardType } from '../../utils/cmnCode';
 import { CARD_TYPE, ICode } from '../../types/codeType';
 import { IAccount } from '../../types/accountType';
 import { ICard } from '../../types/cardType';
 import { useMutation } from '@tanstack/react-query';
 import { insertCard } from '../../api/card';
+import { dateList } from '../../utils/common';
 
 interface IRegularIncomeForm {
     dialogOpen: boolean;
@@ -160,7 +160,7 @@ function CardForm({ dialogOpen, handleDialogClose, cardTypeCodes, cardCorpCodes,
                             margin="normal"
                             defaultValue={1}
                         >
-                            {_dateCode.map((option, idx) => (
+                            {dateList.map((option, idx) => (
                                 <MenuItem key={option.value} value={option.value}>
                                     {option.label}
                                 </MenuItem>

@@ -1,8 +1,5 @@
 import React from 'react';
-import Grid, { EAddType, EGridType } from '../../components/Grid';
-import { randomId } from "@mui/x-data-grid-generator";
 import { DataGrid, GridColDef, GridRowSelectionModel, GridRowsProp, GridSlots, GridToolbarContainer } from "@mui/x-data-grid";
-import { _bank, _cardCorp, _cardType } from '../../utils/cmnCode';
 import CardForm from './CardForm';
 import HelmetTitle from '../../components/HelmetTitle';
 import { Button } from '@mui/material';
@@ -10,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CODE_GROUP_ID, ICode } from '../../types/codeType';
-import { getCodeList } from '../../api/code';
+import { getCodeList, getCodeListByCodeGroup } from '../../api/code';
 import { getAccountList } from '../../api/account';
 import { IAccount } from '../../types/accountType';
 import { ICard } from '../../types/cardType';
@@ -22,13 +19,13 @@ function Card() {
     // 카드구분 코드목록 조회
     const { data: cardTypeCodes } = useQuery<ICode[]>({
         queryKey: ['cardTypeCodes'],
-        queryFn: () => getCodeList(CODE_GROUP_ID.CARD_TYPE),
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.CARD_TYPE),
     });
 
     // 카드사 코드목록 조회
     const { data: cardCorpCodes } = useQuery<ICode[]>({
         queryKey: ['cardCorpCodes'],
-        queryFn: () => getCodeList(CODE_GROUP_ID.CARD_CORP),
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.CARD_CORP),
     });
 
     // 계좌 목록 조회

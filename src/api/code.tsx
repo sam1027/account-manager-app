@@ -3,7 +3,12 @@ export const getCodeGrpList = async () => {
     return data.json();
 }
 
-export const getCodeList = async (codeGrpId?:string) => {
+export const getCodeList = async () => {
+    const data = await fetch(`${process.env.REACT_APP_SERVER_URL}/code/list`);
+    return data.json();
+}
+
+export const getCodeListByCodeGroup = async (codeGrpId?:string) => {
     if(!codeGrpId) return ;
     const data = await fetch(`${process.env.REACT_APP_SERVER_URL}/code/${codeGrpId}`);
     return data.json();

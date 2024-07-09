@@ -4,6 +4,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import { useCodeStore } from './store/commonStore';
 
 const drawerWidth = 240;
 
@@ -45,6 +46,12 @@ function Root() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    // Main Store
+    // const codeStore = useCodeStore();
+    // React.useEffect(()=> {
+    //     if(codeStore.codeList.length === 0) codeStore.fetch.codeList();
+    // }, []);
 
     return (
         <Box sx={{ display: 'flex' }}>

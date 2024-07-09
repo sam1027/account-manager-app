@@ -1,14 +1,54 @@
 import React from 'react';
-import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel, GridRowsProp, GridSlots, GridToolbarContainer } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
 import Grid, { EAddType, EGridType } from "../../components/Grid";
 import { _cycleCode, _accountCode, _incomeSourceCode, _expdItemCode, _cardCode, _expdWayCode } from '../../utils/cmnCode';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import RegularExpenditureForm from './RegularExpenditureForm';
 import HelmetTitle from '../../components/HelmetTitle';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { useQuery } from '@tanstack/react-query';
+import { CODE_GROUP_ID, ICode } from '../../types/codeType';
+import { getCodeList, getCodeListByCodeGroup } from '../../api/code';
+import { ICard } from '../../types/cardType';
+import { getCardList } from '../../api/card';
+import { useCodeStore } from '../../store/commonStore';
+import { IAccount } from '../../types/accountType';
+import { getAccountList } from '../../api/account';
 
 function RegularExpenditure() {
-    const initialRows: GridRowsProp = [
+    // 실행 주기 코드목록 조회
+    const { data: cycleCodes } = useQuery<ICode[]>({
+        queryKey: ['cycleCodes'],
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.CYCLE),
+    });
+
+    // 결제 수단 코드목록 조회
+    const { data: payMethodCodes } = useQuery<ICode[]>({
+        queryKey: ['payMethodCodes'],
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.PAY_METHOD),
+    });
+
+    // 결제 계좌 목록 조회
+    const { data:accountList} = useQuery<IAccount[]>({
+        queryKey: ['accountList'],
+        queryFn: getAccountList,
+    })
+
+    // 결제 카드 목록 조회
+    const { data:cardList} = useQuery<ICard[]>({
+        queryKey: ['cardList'],
+        queryFn: getCardList,
+    })
+
+    // 지출 항목 코드목록 조회
+    const { data: expendTypeCodes } = useQuery<ICode[]>({
+        queryKey: ['expendTypeCodes'],
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.EXPEND_TYPE),
+    });
+
+    const data: GridRowsProp = [
         { 
             id: randomId(), 
             cycle: '1', 
@@ -155,19 +195,57 @@ function RegularExpenditure() {
         handleDialogOpen();
     }
 
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+
+    function EditToolbar() {
+        return (
+            <GridToolbarContainer>
+                <Button color="primary" startIcon={<AddIcon />} onClick={handleDialogAddClick}>
+                    Add
+                </Button>
+                {/* <Button color="primary" startIcon={<RemoveIcon />} onClick={handleDeleteRows}>
+                    Delete
+                </Button> */}
+            </GridToolbarContainer>
+        );
+    }
+
     return (
         <Box>
             <HelmetTitle title="설정 | 정기 지출" />
 
-            <Grid 
+            <DataGrid
+                columns={columns}
+                rows={data}
+                autoHeight
+                slots={{
+                    toolbar: EditToolbar  as GridSlots['toolbar'],
+                }}
+                checkboxSelection
+                onRowSelectionModelChange={(newRowSelectionModel) => {
+                    setRowSelectionModel(newRowSelectionModel);
+                }}
+                rowSelectionModel={rowSelectionModel}
+                // getRowId={(row) => row.card_id}
+            />
+
+            {/* <Grid 
                 initialRows={initialRows} 
                 columns={columns} 
                 gridType={EGridType.TOOLBAR_MODIFY} 
                 addType={EAddType.DIALOG} 
                 handleDialogAddClick={handleDialogAddClick} 
-            />
+            /> */}
 
-            <RegularExpenditureForm dialogOpen={dialogOpen} handleDialogClose={handleDialogClose} />
+            <RegularExpenditureForm 
+                dialogOpen={dialogOpen} 
+                handleDialogClose={handleDialogClose}
+                cycleCodes={cycleCodes}
+                payMethodCodes={payMethodCodes}
+                cardList={cardList}
+                expendTypeCodes={expendTypeCodes}
+                accountList={accountList}
+            />
         </Box>
     );
 }

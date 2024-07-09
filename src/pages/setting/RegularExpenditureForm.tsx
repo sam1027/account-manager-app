@@ -8,6 +8,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { FormControl, FormControlLabel, InputAdornment, MenuItem, Switch } from '@mui/material';
 import { MoneyFormatCustom } from '../../utils/Mui';
 import { _cycleCode, _dateCode, _accountCode, _incomeSourceCode, _monthCode, _expdWayCode, _cardCode, _expdItemCode } from '../../utils/cmnCode';
+import { ICard } from '../../types/cardType';
+import { CYCLE_TYPE, ICode, PAY_MTD_TYPE } from '../../types/codeType';
+import { IAccount } from '../../types/accountType';
 
 interface IDialogItem {
     cycle: string;
@@ -25,11 +28,24 @@ interface IDialogItem {
 interface IRegularExpenditureForm{
     dialogOpen: boolean;
     handleDialogClose: () => void;
+    cardList?: ICard[];
+    payMethodCodes?: ICode[];
+    cycleCodes?: ICode[];
+    expendTypeCodes?: ICode[];
+    accountList?: IAccount[];
 }
 
-function RegularExpenditureForm({dialogOpen, handleDialogClose}:IRegularExpenditureForm) {
-    const [selectedCycle, setSelectedCycle] = React.useState("1");
-    const [expdWay, setExpdWay] = React.useState("card");
+function RegularExpenditureForm({
+    dialogOpen, 
+    handleDialogClose,
+    cardList,
+    payMethodCodes,
+    cycleCodes,
+    expendTypeCodes,
+    accountList,
+}:IRegularExpenditureForm) {
+    const [selectedCycle, setSelectedCycle] = React.useState("");
+    const [expdWay, setExpdWay] = React.useState("");
 
     const handleCycleChangeEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedCycle(event.target.value);
@@ -74,17 +90,20 @@ function RegularExpenditureForm({dialogOpen, handleDialogClose}:IRegularExpendit
                     style = {{width: 150}}
                     onChange={handleCycleChangeEvent}
                 >
-                    {_cycleCode.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    {
+                        cycleCodes &&
+                        cycleCodes.map((option) => (
+                            <MenuItem key={option.cd_id} value={option.cd_id}>
+                                {option.cd_nm}
+                            </MenuItem>
+                        ))
+                    }
                 </TextField>
                 <TextField
                     id="month"
                     name="month"
-                    hidden={selectedCycle !== '1'}
-                    disabled={selectedCycle !== '1'}
+                    hidden={selectedCycle !== CYCLE_TYPE.EVERY_YEAR}
+                    disabled={selectedCycle !== CYCLE_TYPE.EVERY_YEAR}
                     select
                     label="월(Month)"
                     defaultValue={new Date().getMonth() + 1}
@@ -100,8 +119,8 @@ function RegularExpenditureForm({dialogOpen, handleDialogClose}:IRegularExpendit
                 <TextField
                     id="date"
                     name="date"
-                    hidden={selectedCycle === '3'}
-                    disabled={selectedCycle === '3'}
+                    hidden={selectedCycle === CYCLE_TYPE.EVERY_DAY}
+                    disabled={selectedCycle === CYCLE_TYPE.EVERY_DAY}
                     select
                     label="일(Date)"
                     defaultValue={new Date().getDate()}
@@ -141,45 +160,54 @@ function RegularExpenditureForm({dialogOpen, handleDialogClose}:IRegularExpendit
                     required
                     onChange={handleExpdWayChangeEvent}
                 >
-                    {_expdWayCode.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    {
+                        payMethodCodes &&
+                        payMethodCodes.map((option) => (
+                            <MenuItem key={option.cd_id} value={option.cd_id}>
+                                {option.cd_nm}
+                            </MenuItem>
+                        ))
+                    }
                 </TextField>
                 <TextField
                     id="expdMethod"
                     name="expdMethod"
-                    hidden={expdWay !== 'card'}
-                    disabled={expdWay !== 'card'}
+                    hidden={expdWay !== PAY_MTD_TYPE.CARD}
+                    disabled={expdWay !== PAY_MTD_TYPE.CARD}
                     select
                     label="결제 카드"
                     margin="dense"
                     required
                     fullWidth
                 >
-                    {_cardCode.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    {
+                        cardList &&
+                        cardList.map((option) => (
+                            <MenuItem key={option.card_id} value={option.card_id}>
+                                {option.card_nm}
+                            </MenuItem>
+                        ))
+                    }
                 </TextField>
                 <TextField
                     id="account"
                     name="account"
-                    hidden={expdWay === 'card'}
-                    disabled={expdWay === 'card'}
+                    hidden={expdWay === PAY_MTD_TYPE.CARD}
+                    disabled={expdWay === PAY_MTD_TYPE.CARD}
                     select
                     label="결제 계좌"
                     margin="dense"
                     required
                     fullWidth
                 >
-                    {_accountCode.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    {
+                        accountList && 
+                        accountList.map((option) => (
+                            <MenuItem key={option.acnt_id} value={option.acnt_id}>
+                                {option.acnt_nm}
+                            </MenuItem>
+                        ))
+                    }
                 </TextField>
                 <TextField
                     id="expdItem"
@@ -190,11 +218,14 @@ function RegularExpenditureForm({dialogOpen, handleDialogClose}:IRegularExpendit
                     required
                     fullWidth
                 >
-                    {_expdItemCode.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
+                    {
+                        expendTypeCodes &&
+                        expendTypeCodes.map((option) => (
+                            <MenuItem key={option.cd_id} value={option.cd_id}>
+                                {option.cd_nm}
+                            </MenuItem>
+                        ))
+                    }   
                 </TextField>
                 <TextField
                     id="content"

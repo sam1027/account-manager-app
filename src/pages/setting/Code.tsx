@@ -17,52 +17,43 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import HelmetTitle from '../../components/HelmetTitle';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import { deleteCode } from '../../api/code';
-import { ICodeParams } from '../../types/codeType';
-import { changeSubCatUseYn, deleteSubCat, getCatList, getSubCatList, insertSubCat } from '../../api/cat';
-import { ICat, ISubCat, ISubCatUseYn } from '../../types/catType';
+import { changeCodeUseYn, deleteCode, getCodeGrpList, getCodeListByCodeGroup, insertCode } from '../../api/code';
+import { ICode, ICodeGrp, ICodeParams } from '../../types/codeType';
 
-function Category() {
+function Code() {
     const queryClient = useQueryClient();
-    const [catId, setCatId] = React.useState("");
+    const [codeGrpId, setCodeGrpId] = React.useState("");
     const [addFormOpen, setAddFormOpen] = React.useState(false);
 
-    const {data:catList, isLoading} = useQuery<ICat[]>({
-        queryKey: ['catList'],
-        queryFn: getCatList,
-
+    const {data:codeGrpList, isLoading:isCodegrplistLoading} = useQuery<ICodeGrp[]>({
+        queryKey: ['codeGrpList'],
+        queryFn: getCodeGrpList,
     });
 
-    const {data:subCatList, refetch} = useQuery<ISubCat[]>({
-        queryKey: ['subCatList'],
-        queryFn: () => getSubCatList(catId),
+    const {data:codeList, isLoading:isCodeListLoading, refetch} = useQuery<ICode[]>({
+        queryKey: ['codeList'],
+        queryFn: () => getCodeListByCodeGroup(codeGrpId),
         enabled: false,
     });
 
     React.useEffect(() => {
-        if(catId) refetch();
-    }, [catId]);
-
-    React.useEffect(() => {
-        if (catList && !isLoading) {
-            setCatId(catList[0]?.cat_id);
-        }
-    }, [catList, isLoading]);
+        if(codeGrpId) refetch();
+    }, [codeGrpId]);
 
     // 코드그룹 클릭 이벤트
-    const handleCatClick = (id:string) => {
-        setCatId(() => id);
+    const handleCodeGrpClick = (id:string) => {
+        setCodeGrpId(() => id);
     }
 
     // 사용여부 변경
-    const changeSubCatUseYnFn = useMutation({
-        mutationFn: ({sub_cat_id, use_yn}:ISubCatUseYn) => {
-            return changeSubCatUseYn(catId, sub_cat_id, use_yn);
+    const ChangeCodeUseYnFn = useMutation({
+        mutationFn: ({codeId, useYn}:ICodeParams) => {
+            return changeCodeUseYn(codeGrpId, codeId, useYn!)
         },
         onSuccess: () => { 
             // 요청 성공
             // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['subCatList']});
+            queryClient.invalidateQueries({queryKey: ['codeList']});
             refetch();
         },
         onError: () => { 
@@ -75,13 +66,13 @@ function Category() {
 
     // 삭제
     const DeleteCodeFn = useMutation({
-        mutationFn: ({subCatId}:{subCatId:string}) => {
-            return deleteSubCat(catId, subCatId);
+        mutationFn: ({codeId}:ICodeParams) => {
+            return deleteCode(codeGrpId, codeId);
         },
         onSuccess: () => { 
             // 요청 성공
             // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['subCatList']});
+            queryClient.invalidateQueries({queryKey: ['codeList']});
             refetch();
         },
         onError: () => { 
@@ -93,14 +84,14 @@ function Category() {
     })
 
     // 추가
-    const InsertSubCatFn = useMutation({
-        mutationFn: (obj:ISubCat) => {
-            return insertSubCat(catId, obj.sub_cat_nm);
+    const InsertCodeFn = useMutation({
+        mutationFn: (obj:ICodeParams) => {
+            return insertCode(codeGrpId, obj.codeId, obj.codeName!);
         },
         onSuccess: () => { 
             // 요청 성공
             // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['subCatList']});
+            queryClient.invalidateQueries({queryKey: ['codeList']});
             handleAddFormClose();
             refetch();
         },
@@ -114,20 +105,20 @@ function Category() {
 
     // 코드 - 사용유무 변경 이벤트
     const handleIsUseChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        const sub_cat_id = event.target.id;
-        const use_yn = checked ? "Y" : "N";
-        changeSubCatUseYnFn.mutate({sub_cat_id, use_yn});
+        const codeId = event.target.id;
+        const useYn = checked ? "Y" : "N";
+        ChangeCodeUseYnFn.mutate({codeId, useYn});
     }
 
     // 코드 - 삭제 이벤트
     const handleDeleteClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        const subCatId = event.currentTarget.id;
-        DeleteCodeFn.mutate({subCatId});
+        const codeId = event.currentTarget.id;
+        DeleteCodeFn.mutate({codeId});
     }
 
     // 코드 - 추가 이벤트
-    const handleSaveClick = (obj:ISubCat) => {
-        InsertSubCatFn.mutate(obj);
+    const handleCodeSaveClick = (obj:ICodeParams) => {
+        InsertCodeFn.mutate(obj);
     }
 
     const handleAddFormOpen = () => {
@@ -140,29 +131,30 @@ function Category() {
 
     return (
         <div style={{display: 'flex', alignItems: 'start', justifyContent: 'center'}}>
-            <HelmetTitle title="설정 | 카테고리 관리" />
+            <HelmetTitle title="설정 | 코드 관리" />
 
             <Box sx={{ width: '50%', maxWidth: 500, bgcolor: 'background.paper' }}>
                 <nav aria-label="main mailbox folders">
                     <List 
                         subheader={
                             <ListSubheader component="div" id="nested-list-subheader">
-                                카테고리
+                                코드
                             </ListSubheader>
                         }
                     >
-                        {catList &&
-                        catList.map(item => (
-                            <ListItem key={item.cat_id} disablePadding>
+                        {!isCodegrplistLoading && 
+                        codeGrpList &&
+                        codeGrpList.map(item => (
+                            <ListItem key={item.cd_grp_id} disablePadding>
                                 <ListItemButton
-                                    key={item.cat_id}
-                                    selected={catId === item.cat_id}
-                                    onClick={() => handleCatClick(item.cat_id)}
+                                    key={item.cd_grp_id}
+                                    selected={codeGrpId === item.cd_grp_id}
+                                    onClick={() => handleCodeGrpClick(item.cd_grp_id)}
                                 >
                                     <ListItemIcon>
                                         <InboxIcon />
                                     </ListItemIcon>
-                                    <ListItemText primary={item.cat_nm} />
+                                    <ListItemText primary={item.cd_grp_nm} />
                                 </ListItemButton>
                             </ListItem>
                         ))}
@@ -183,7 +175,7 @@ function Category() {
                                 }}
                             >
                                 하위 카테고리
-                                {catId && <Button 
+                                {codeGrpId && <Button 
                                     variant="outlined" 
                                     size="small" 
                                     startIcon={<AddIcon />}
@@ -203,38 +195,36 @@ function Category() {
                         dense={true}
                     >
                         {
-                        subCatList &&
-                        subCatList.map(item => (
+                        !isCodeListLoading &&
+                        codeList &&
+                        codeList.map(item => (
                             <>
-                                <ListItem
-                                    key={item.sub_cat_id}
-                                    secondaryAction={
-                                        item.is_system !== 'Y' &&
-                                        <IconButton 
-                                            id={item.sub_cat_id}
-                                            edge="end" 
-                                            aria-label="delete"
-                                            onClick={handleDeleteClick}
-                                        >
-                                            <ClearIcon />
-                                        </IconButton>
-                                    }
-                                >
-                                    <ListItemText primary={item.sub_cat_nm} />
-                                    {item.is_system !== 'Y' &&
-                                    <Switch
-                                        edge="end"
-                                        id={item.sub_cat_id}
-                                        onChange={handleIsUseChange}
-                                        checked={item.use_yn === 'Y' ? true : false}
-                                        inputProps={{
-                                            'aria-labelledby': 'switch-list-label-wifi',
-                                        }}
-                                    />
-                                    }
-                                </ListItem>
-                                <Divider variant="middle" component="li" />
-                            </>
+                            <ListItem
+                                key={item.cd_id}
+                                secondaryAction={
+                                    <IconButton 
+                                        id={item.cd_id}
+                                        edge="end" 
+                                        aria-label="delete"
+                                        onClick={handleDeleteClick}
+                                    >
+                                        <ClearIcon />
+                                    </IconButton>
+                                }
+                            >
+                                <ListItemText primary={item.cd_nm} />
+                                <Switch
+                                    edge="end"
+                                    id={item.cd_id}
+                                    onChange={handleIsUseChange}
+                                    checked={item.use_yn === 'Y' ? true : false}
+                                    inputProps={{
+                                        'aria-labelledby': 'switch-list-label-wifi',
+                                    }}
+                                />
+                            </ListItem>
+                            <Divider variant="middle" component="li" />
+                        </>
                         ))
                         }
                     </List>
@@ -249,8 +239,9 @@ function Category() {
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
-                        const formJson = Object.fromEntries((formData as any).entries()) as ISubCat;
-                        handleSaveClick(formJson);
+                        const formJson = Object.fromEntries((formData as any).entries());
+                        const params:ICodeParams = JSON.parse(JSON.stringify(formJson));
+                        handleCodeSaveClick(params);
                     },
                 }}
             >
@@ -260,8 +251,18 @@ function Category() {
                         autoFocus
                         required
                         margin="dense"
-                        id="sub_cat_nm"
-                        name="sub_cat_nm"
+                        id="codeId"
+                        name="codeId"
+                        label="하위 카테고리 아이디"
+                        fullWidth
+                        variant="standard"
+                    />
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="codeName"
+                        name="codeName"
                         label="하위 카테고리 명"
                         fullWidth
                         variant="standard"
@@ -276,4 +277,4 @@ function Category() {
     );
 }
 
-export default Category;
+export default Code;

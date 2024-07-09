@@ -10,6 +10,7 @@ import Category from "./pages/setting/Category";
 import RegularExpenditure from "./pages/setting/RegularExpenditure";
 import RegularIncome from "./pages/setting/RegularIncome";
 import Root from "./Root";
+import Code from "./pages/setting/Code";
 
 const router = createBrowserRouter([
     {
@@ -54,6 +55,11 @@ const router = createBrowserRouter([
             {
                 path: "setting/category",
                 element: <Category />,
+                errorElement: <SystemError />
+            },
+            {
+                path: "setting/code",
+                element: <Code />,
                 errorElement: <SystemError />
             },
         ],

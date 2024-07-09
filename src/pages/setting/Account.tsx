@@ -1,8 +1,5 @@
 import React from 'react';
-import Grid, { EAddType, EGridType } from '../../components/Grid';
-import { randomId } from "@mui/x-data-grid-generator";
-import { DataGrid, GridColDef, GridRowsProp, GridToolbarContainer, GridSlots, GridRowSelectionModel, useGridApiContext } from "@mui/x-data-grid";
-import { _bank } from '../../utils/cmnCode';
+import { DataGrid, GridColDef, GridToolbarContainer, GridSlots, GridRowSelectionModel, useGridApiContext } from "@mui/x-data-grid";
 import AccountForm from './AccountForm';
 import HelmetTitle from '../../components/HelmetTitle';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,9 +8,8 @@ import { IAccount } from '../../types/accountType';
 import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { GridRowModesModel } from '@mui/x-data-grid';
 import { CODE_GROUP_ID, ICode } from '../../types/codeType';
-import { getCodeList } from '../../api/code';
+import { getCodeList, getCodeListByCodeGroup } from '../../api/code';
 
 function Account() {
     const queryClient = useQueryClient();
@@ -21,7 +17,7 @@ function Account() {
     // 금융기관 코드목록 조회    
     const { data: bankCodes } = useQuery<ICode[]>({
         queryKey: ['backCodes'],
-        queryFn: () => getCodeList(CODE_GROUP_ID.BANK),
+        queryFn: () => getCodeListByCodeGroup(CODE_GROUP_ID.BANK),
     });
 
     // 조회

@@ -39,3 +39,19 @@ export const CARD_TYPE = {
 } as const;
 
 type CARD_TYPE = (typeof CARD_TYPE)[keyof typeof CARD_TYPE];
+
+export const CYCLE_TYPE = {
+	EVERY_DAY: "EDAY", // 매일
+	EVERY_MONTH: "EMONTH", // 매달
+	EVERY_YEAR: "EYEAR", // 매년
+} as const;
+
+type CYCLE_TYPE = (typeof CYCLE_TYPE)[keyof typeof CYCLE_TYPE];
+
+export const PAY_MTD_TYPE = {
+	ACCOUNT: "ACCOUNT", // 계좌이체
+	CARD: "CARD", // 카드
+	CASH: "CASH", // 현금
+} as const;
+
+type PAY_MTD_TYPE = (typeof PAY_MTD_TYPE)[keyof typeof PAY_MTD_TYPE];
