@@ -1,23 +1,56 @@
 import {create} from "zustand";
+import {createJSONStorage, persist} from "zustand/middleware";
 
-import { getCodeList} from "../api/code";
-import { CODE_GROUP_ID, ICode } from "../types/codeType";
+import { getCodeGrpList, getCodeList} from "../api/code";
+import { CODE_GROUP_ID, ICode, ICodeGrp } from "../types/codeType";
 
-interface ICodeStore {
-    codeList : ICode[],
+interface ICodeGrpStore {
+    codeGrpList : ICodeGrp[],
     fetch : {
-        codeList : () => void,
-    },
-    action: {
-        codeListByGrpId: (codeGrpId:string) => ICode[],
+        storeCodeGrpList : () => void,
     },
     init: () => void,
 }
 
+interface ICodeStore {
+    codeList : ICode[],
+    fetch : {
+        storeCodeList : () => void,
+    },
+    action: {
+        getCodeListByGrpId: (codeGrpId:string) => ICode[],
+        getCodeByGrpIdAndCodeId: (codeGrpId:string, codeId:string) => ICode[],
+    },
+    init: () => void,
+}
+
+export const useCodeGrpStore = create(
+    persist<ICodeGrpStore>(
+        (set, get) => ({
+            codeGrpList : [],
+            fetch : {
+                storeCodeGrpList: async () => {
+                    const codeGrpList = await getCodeGrpList();
+                    set({
+                        codeGrpList : codeGrpList
+                    })
+                },
+            },
+            init: () => {
+                set({codeGrpList : []});
+            },
+        }),
+        { 
+            name: "codeGrpStore", 
+            storage: createJSONStorage(() => localStorage),
+        }
+    )
+);
+
 export const useCodeStore = create<ICodeStore>((set, get) => ({
     codeList : [],
     fetch : {
-        codeList : async () => {
+        storeCodeList : async () => {
             const codeList = await getCodeList();
             set({
                 codeList : codeList
@@ -25,9 +58,13 @@ export const useCodeStore = create<ICodeStore>((set, get) => ({
         },
     },
     action: {
-        codeListByGrpId: (codeGrpId:string) => {
+        getCodeListByGrpId: (codeGrpId:string) => {
              const allCodes = get().codeList;
              return allCodes.filter(code => code.cd_grp_id === codeGrpId);
+        },
+        getCodeByGrpIdAndCodeId: (codeGrpId:string, codeId:string) => {
+             const allCodes = get().codeList;
+             return allCodes.filter(code => code.cd_grp_id === codeGrpId && code.cd_id === codeId);
         },
     },
     init: () => {

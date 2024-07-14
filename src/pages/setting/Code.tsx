@@ -16,29 +16,36 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import HelmetTitle from '../../components/HelmetTitle';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import { changeCodeUseYn, deleteCode, getCodeGrpList, getCodeListByCodeGroup, insertCode } from '../../api/code';
+import {useMutation} from '@tanstack/react-query';
+import { changeCodeUseYn, deleteCode, insertCode } from '../../api/code';
 import { ICode, ICodeGrp, ICodeParams } from '../../types/codeType';
+import { useCodeGrpStore, useCodeStore } from '../../store/commonStore';
+import { isOnlyEnglish } from '../../utils/common';
 
 function Code() {
-    const queryClient = useQueryClient();
+    const codeGrpStore = useCodeGrpStore();
+    const codeStore = useCodeStore();
     const [codeGrpId, setCodeGrpId] = React.useState("");
     const [addFormOpen, setAddFormOpen] = React.useState(false);
-
-    const {data:codeGrpList, isLoading:isCodegrplistLoading} = useQuery<ICodeGrp[]>({
-        queryKey: ['codeGrpList'],
-        queryFn: getCodeGrpList,
-    });
-
-    const {data:codeList, isLoading:isCodeListLoading, refetch} = useQuery<ICode[]>({
-        queryKey: ['codeList'],
-        queryFn: () => getCodeListByCodeGroup(codeGrpId),
-        enabled: false,
-    });
+    const [codeGrpList, setCodeGrpList] = React.useState<ICodeGrp[]>([]);
+    const [codeList, setCodeList] = React.useState<ICode[]>([]);
 
     React.useEffect(() => {
-        if(codeGrpId) refetch();
+        if(codeGrpStore.codeGrpList.length > 0) {
+            setCodeGrpList(codeGrpStore.codeGrpList);
+            setCodeGrpId(codeGrpStore.codeGrpList[0]?.cd_grp_id);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if(codeGrpId) getCodeListByCodeGroup();
     }, [codeGrpId]);
+
+    const getCodeListByCodeGroup = async () => {
+        await codeStore.fetch.storeCodeList();
+        const result = await codeStore.action.getCodeListByGrpId(codeGrpId);
+        setCodeList(result);
+    }
 
     // 코드그룹 클릭 이벤트
     const handleCodeGrpClick = (id:string) => {
@@ -51,10 +58,7 @@ function Code() {
             return changeCodeUseYn(codeGrpId, codeId, useYn!)
         },
         onSuccess: () => { 
-            // 요청 성공
-            // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['codeList']});
-            refetch();
+            getCodeListByCodeGroup();
         },
         onError: () => { 
             // 에러 발생 
@@ -70,10 +74,7 @@ function Code() {
             return deleteCode(codeGrpId, codeId);
         },
         onSuccess: () => { 
-            // 요청 성공
-            // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['codeList']});
-            refetch();
+            getCodeListByCodeGroup();
         },
         onError: () => { 
             // 에러 발생 
@@ -89,11 +90,8 @@ function Code() {
             return insertCode(codeGrpId, obj.codeId, obj.codeName!);
         },
         onSuccess: () => { 
-            // 요청 성공
-            // 요청 성공 시 해당 queryKey 유효성 제거
-            queryClient.invalidateQueries({queryKey: ['codeList']});
             handleAddFormClose();
-            refetch();
+            getCodeListByCodeGroup();
         },
         onError: () => { 
             // 에러 발생 
@@ -118,7 +116,28 @@ function Code() {
 
     // 코드 - 추가 이벤트
     const handleCodeSaveClick = (obj:ICodeParams) => {
+        /* validate */
+        if(!isOnlyEnglish(obj.codeId)){
+            alert("영어로만 코드아이디를 입력하세요.");
+            return; 
+        }else{
+            obj.codeId = obj.codeId.toUpperCase();
+        }
+
+        if(isCodeIdDupl(obj.codeId).length > 0) {
+            alert("코드아이디 중복입니다.");
+            return;
+        } 
+
         InsertCodeFn.mutate(obj);
+    }
+
+    // 코드ID 중복체크
+    const isCodeIdDupl = (codeId:string) => {
+        console.log('codeIdDupl', codeId);
+        const result = codeStore.action.getCodeByGrpIdAndCodeId(codeGrpId, codeId);
+        console.log('isCodeIdDupl result', result);
+        return result;
     }
 
     const handleAddFormOpen = () => {
@@ -142,8 +161,7 @@ function Code() {
                             </ListSubheader>
                         }
                     >
-                        {!isCodegrplistLoading && 
-                        codeGrpList &&
+                        {codeGrpList &&
                         codeGrpList.map(item => (
                             <ListItem key={item.cd_grp_id} disablePadding>
                                 <ListItemButton
@@ -174,7 +192,7 @@ function Code() {
                                     alignItems: 'center'
                                 }}
                             >
-                                하위 카테고리
+                                하위 코드
                                 {codeGrpId && <Button 
                                     variant="outlined" 
                                     size="small" 
@@ -195,7 +213,6 @@ function Code() {
                         dense={true}
                     >
                         {
-                        !isCodeListLoading &&
                         codeList &&
                         codeList.map(item => (
                             <>
@@ -253,7 +270,7 @@ function Code() {
                         margin="dense"
                         id="codeId"
                         name="codeId"
-                        label="하위 카테고리 아이디"
+                        label="하위 코드 아이디"
                         fullWidth
                         variant="standard"
                     />
@@ -263,7 +280,7 @@ function Code() {
                         margin="dense"
                         id="codeName"
                         name="codeName"
-                        label="하위 카테고리 명"
+                        label="하위 코드명"
                         fullWidth
                         variant="standard"
                     />
